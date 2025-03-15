@@ -1,0 +1,11 @@
+# ninja log v6
+5	133	7637113799712534	CMakeFiles/compiler.dir/main.cpp.obj.ddi	9030f47115ddb804
+128	146	7637151390969891	CMakeFiles/compiler.dir/main.cpp.obj.modmap	138564ff1cdc1474
+147	697	7637151391160039	CMakeFiles/compiler.dir/LexAnalyzer.cpp.obj	82f9a4743425fd3d
+128	146	7637151390969891	CMakeFiles/compiler.dir/CXX.dd	138564ff1cdc1474
+5	127	7637151389745609	CMakeFiles/compiler.dir/LexAnalyzer.cpp.obj.ddi	a2215f9f037d4dbd
+128	146	7637151390969891	C:/Users/broga/OneDrive/Desktop/AU Classes/Year 3/Programming Languages/compiler/cmake-build-debug/CMakeFiles/compiler.dir/CXXModules.json	138564ff1cdc1474
+2	209	7637158258357323	build.ninja	6e820454892971d6
+128	146	7637151390969891	CMakeFiles/compiler.dir/LexAnalyzer.cpp.obj.modmap	138564ff1cdc1474
+153	623	7637113801194510	CMakeFiles/compiler.dir/main.cpp.obj	e5aa0be5ab6c4c49
+697	781	7637151396668346	compiler.exe	377304bd929cbc39

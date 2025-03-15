@@ -1,0 +1,108 @@
+{
+	"cmake" : 
+	{
+		"generator" : 
+		{
+			"multiConfig" : false,
+			"name" : "Ninja"
+		},
+		"paths" : 
+		{
+			"cmake" : "C:/Program Files/JetBrains/CLion 2024.3.1.1/bin/cmake/win/x64/bin/cmake.exe",
+			"cpack" : "C:/Program Files/JetBrains/CLion 2024.3.1.1/bin/cmake/win/x64/bin/cpack.exe",
+			"ctest" : "C:/Program Files/JetBrains/CLion 2024.3.1.1/bin/cmake/win/x64/bin/ctest.exe",
+			"root" : "C:/Program Files/JetBrains/CLion 2024.3.1.1/bin/cmake/win/x64/share/cmake-3.30"
+		},
+		"version" : 
+		{
+			"isDirty" : false,
+			"major" : 3,
+			"minor" : 30,
+			"patch" : 5,
+			"string" : "3.30.5",
+			"suffix" : ""
+		}
+	},
+	"objects" : 
+	[
+		{
+			"jsonFile" : "codemodel-v2-503e4b2182d5b1aab13f.json",
+			"kind" : "codemodel",
+			"version" : 
+			{
+				"major" : 2,
+				"minor" : 7
+			}
+		},
+		{
+			"jsonFile" : "cache-v2-49186ea3b82e4b0df1e2.json",
+			"kind" : "cache",
+			"version" : 
+			{
+				"major" : 2,
+				"minor" : 0
+			}
+		},
+		{
+			"jsonFile" : "cmakeFiles-v1-b16d0e329b84c97def7c.json",
+			"kind" : "cmakeFiles",
+			"version" : 
+			{
+				"major" : 1,
+				"minor" : 1
+			}
+		},
+		{
+			"jsonFile" : "toolchains-v1-5424243a936d8f7d3d01.json",
+			"kind" : "toolchains",
+			"version" : 
+			{
+				"major" : 1,
+				"minor" : 0
+			}
+		}
+	],
+	"reply" : 
+	{
+		"cache-v2" : 
+		{
+			"jsonFile" : "cache-v2-49186ea3b82e4b0df1e2.json",
+			"kind" : "cache",
+			"version" : 
+			{
+				"major" : 2,
+				"minor" : 0
+			}
+		},
+		"cmakeFiles-v1" : 
+		{
+			"jsonFile" : "cmakeFiles-v1-b16d0e329b84c97def7c.json",
+			"kind" : "cmakeFiles",
+			"version" : 
+			{
+				"major" : 1,
+				"minor" : 1
+			}
+		},
+		"codemodel-v2" : 
+		{
+			"jsonFile" : "codemodel-v2-503e4b2182d5b1aab13f.json",
+			"kind" : "codemodel",
+			"version" : 
+			{
+				"major" : 2,
+				"minor" : 7
+			}
+		},
+		"toolchains-v1" : 
+		{
+			"jsonFile" : "toolchains-v1-5424243a936d8f7d3d01.json",
+			"kind" : "toolchains",
+			"version" : 
+			{
+				"major" : 1,
+				"minor" : 0
+			}
+		}
+	}
+}

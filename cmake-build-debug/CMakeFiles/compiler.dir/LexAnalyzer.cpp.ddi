@@ -1,0 +1,11 @@
+{
+"rules": [
+{
+"primary-output": "CMakeFiles/compiler.dir/LexAnalyzer.cpp.o",
+"requires": [
+]
+}
+],
+"version": 0,
+"revision": 0
+}
