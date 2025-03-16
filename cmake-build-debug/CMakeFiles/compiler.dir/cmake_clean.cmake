@@ -1,12 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/compiler.dir/LexAnalyzer.cpp.obj"
-  "CMakeFiles/compiler.dir/LexAnalyzer.cpp.obj.d"
-  "CMakeFiles/compiler.dir/main.cpp.obj"
-  "CMakeFiles/compiler.dir/main.cpp.obj.d"
-  "compiler.exe"
-  "compiler.exe.manifest"
+  "CMakeFiles/compiler.dir/LexAnalyzer.cpp.o"
+  "CMakeFiles/compiler.dir/LexAnalyzer.cpp.o.d"
+  "CMakeFiles/compiler.dir/main.cpp.o"
+  "CMakeFiles/compiler.dir/main.cpp.o.d"
+  "compiler"
   "compiler.pdb"
-  "libcompiler.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

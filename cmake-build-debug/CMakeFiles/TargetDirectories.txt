@@ -1,3 +1,3 @@
-C:/Users/blues/OneDrive/Documents/GitHub/Compiler/cmake-build-debug/CMakeFiles/compiler.dir
-C:/Users/blues/OneDrive/Documents/GitHub/Compiler/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/blues/OneDrive/Documents/GitHub/Compiler/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/emmacamp/Documents/GitHub/emmieleeemmie.github.io/Compiler/cmake-build-debug/CMakeFiles/compiler.dir
+/Users/emmacamp/Documents/GitHub/emmieleeemmie.github.io/Compiler/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/emmacamp/Documents/GitHub/emmieleeemmie.github.io/Compiler/cmake-build-debug/CMakeFiles/rebuild_cache.dir

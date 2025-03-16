@@ -8,8 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "C:/Users/blues/OneDrive/Documents/GitHub/Compiler/LexAnalyzer.cpp" "CMakeFiles/compiler.dir/LexAnalyzer.cpp.obj" "gcc" "CMakeFiles/compiler.dir/LexAnalyzer.cpp.obj.d"
-  "C:/Users/blues/OneDrive/Documents/GitHub/Compiler/main.cpp" "CMakeFiles/compiler.dir/main.cpp.obj" "gcc" "CMakeFiles/compiler.dir/main.cpp.obj.d"
+  "/Users/emmacamp/Documents/GitHub/emmieleeemmie.github.io/Compiler/LexAnalyzer.cpp" "CMakeFiles/compiler.dir/LexAnalyzer.cpp.o" "gcc" "CMakeFiles/compiler.dir/LexAnalyzer.cpp.o.d"
+  "/Users/emmacamp/Documents/GitHub/emmieleeemmie.github.io/Compiler/main.cpp" "CMakeFiles/compiler.dir/main.cpp.o" "gcc" "CMakeFiles/compiler.dir/main.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

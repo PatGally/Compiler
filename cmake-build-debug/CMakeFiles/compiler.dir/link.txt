@@ -1,3 +1,1 @@
-"C:\Program Files\JetBrains\CLion 2024.3.1.1\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\compiler.dir/objects.a
-C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\ar.exe qc CMakeFiles\compiler.dir/objects.a @CMakeFiles\compiler.dir\objects1.rsp
-C:\PROGRA~1\JETBRA~1\CLION2~1.1\bin\mingw\bin\G__~1.EXE -g -Wl,--whole-archive CMakeFiles\compiler.dir/objects.a -Wl,--no-whole-archive -o compiler.exe -Wl,--out-implib,libcompiler.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\compiler.dir\linkLibs.rsp
+/Library/Developer/CommandLineTools/usr/bin/c++ -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/compiler.dir/main.cpp.o CMakeFiles/compiler.dir/LexAnalyzer.cpp.o -o compiler
