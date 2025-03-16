@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/Users/broga/OneDrive/Desktop/AU Classes/Year 3/Programming Languages/compiler/cmake-build-debug",
-		"source" : "C:/Users/broga/OneDrive/Desktop/AU Classes/Year 3/Programming Languages/compiler"
+		"build" : "C:/Users/blues/OneDrive/Documents/GitHub/Compiler/cmake-build-debug",
+		"source" : "C:/Users/blues/OneDrive/Documents/GitHub/Compiler"
 	},
 	"version" : 
 	{

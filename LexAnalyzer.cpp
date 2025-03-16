@@ -25,13 +25,8 @@ LexAnalyzer::LexAnalyzer(istream& infile) {
     string token = data.substr(0, position);
     string lexeme = data.substr(position + 1, data.length()-1);
 
-    tokens.push_back(token);
-    lexemes.push_back(lexeme);
     tokenmap.insert({lexeme, token});
   }
-  for (const auto& tokenPair : tokenmap) {
-        cout << tokenPair.first << " : " << tokenPair.second << endl;
-    }
 }
 
 // pre: 1st parameter refers to an open text file that contains source
