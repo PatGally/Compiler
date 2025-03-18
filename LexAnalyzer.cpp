@@ -98,12 +98,19 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
 
             // Check if it's an identifier
             if (regex_search(remaining, match, identifier) && match.position() == 0) {
-                cout << "match: " << match.str() << endl;
-                cout << "identifier: " << match.str() << endl;
-                cout << "-----------------" << endl;
-                string tokenType = (tokenmap.find(match.str()) != tokenmap.end()) ? tokenmap[match.str()] : "t_id";
-                outfile << tokenType << " : " << match.str() << endl;
-                pos += match.length();
+                if (remaining[0] != '_') {
+                    cout << "match: " << match.str() << endl;
+                    cout << "identifier: " << match.str() << endl;
+                    cout << "-----------------" << endl;
+                    string tokenType = (tokenmap.find(match.str()) != tokenmap.end()) ? tokenmap[match.str()] : "t_id";
+                    outfile << tokenType << " : " << match.str() << endl;
+                    pos += match.length();
+                }
+                else { // exit code here
+                    cerr << "Error Can't start number or identifier with an underscore" << endl;
+                    outfile << "Error" << " : " << match.str() << endl;
+                    return;
+                }
                 continue;
             }
 

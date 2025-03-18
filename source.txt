@@ -1,5 +1,5 @@
 main {
-    integer x = 10;
+    _integer x = 10;
     integer y = 20;
     string msg = "Hello, World!";
 
