@@ -6,6 +6,7 @@
 #include <fstream>
 #include <map>
 #include <vector>
+#include <regex>
 using namespace std;
 
 class LexAnalyzer {
@@ -17,7 +18,8 @@ private:
     vector<string> lexemes;
     vector<string> tokens;
 
-    // other private methods
+    // Store the unprocessed part of the source code
+    string remaining;
 
 public:
     LexAnalyzer(istream& infile);

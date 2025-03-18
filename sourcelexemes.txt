@@ -1,0 +1,22 @@
+t_main : main
+s_lbrace : {
+t_string : string
+t_id : fruit
+s_assign : =
+t_text : banana
+s_semi : ;
+t_integer : integer
+t_id : x
+s_assign : =
+t_number : 5
+s_semi : ;
+t_id : x
+s_plus : +
+t_number : 1
+s_semi : ;
+t_output : output
+s_lparen : (
+t_text : hello world
+s_rparen : )
+s_semi : ;
+s_rbrace : }

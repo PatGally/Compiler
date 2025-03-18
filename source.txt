@@ -1,0 +1,6 @@
+main {
+    string fruit = "banana";
+    integer x = 5;
+    x + 1;
+    output("hello world");
+}
