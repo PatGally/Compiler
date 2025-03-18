@@ -95,6 +95,7 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
             string remaining = data.substr(pos); // Use a substring from pos to end
             cout <<"remaining: " << remaining<< endl; // see how lines are processed.
 
+
             // Check if it's an identifier
             if (regex_search(remaining, match, identifier) && match.position() == 0) {
                 cout << "match: " << match.str() << endl;
@@ -126,15 +127,20 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
                 continue;
             }
 
-            // Check if it's a symbol
+            // check if its symbol
             if (regex_search(remaining, match, symbols) && match.position() == 0) {
                 string symbol = match.str();
-                cout << "match: " << match.str() << endl;
-                cout << "symbols: " << match.str() << endl;
+                if (remaining.substr(0, 2) == "<=") { // skipping over match
+                    symbol = "<=";
+                } else if (remaining.substr(0, 2) == ">=") {
+                    symbol = ">=";
+                }
+                cout << "match: " << symbol << endl;
+                cout << "symbols: " << symbol << endl;
                 cout << "-----------------" << endl;
                 string tokenType = (tokenmap.find(symbol) != tokenmap.end()) ? tokenmap[symbol] : "s_unknown";
                 outfile << tokenType << " : " << symbol << endl;
-                pos += match.length();
+                pos += symbol.length();
                 continue;
             }
 
