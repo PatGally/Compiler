@@ -142,6 +142,7 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
                 outfile << tokenType << " : " << symbol << endl;
                 pos += symbol.length();
                 continue;
+
             }
 
             // Unknown token
