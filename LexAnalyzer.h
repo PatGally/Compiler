@@ -1,3 +1,11 @@
+/*
+ * CSC4450 - HW 4 - Lexical Analyzer
+ * Members: Charles Eubanks, Patrick Gallavan, Emma Camp, Andry Astorga, Aksel Del Toro, Ashley Czerniak
+ * Create a Lexical Analyzer that reads through a given input file of source code and lexeme/token pairs,
+ * and outputs all of the valid token pairs from the source code, as well as an error if an invalid
+ * lexeme is discovered.
+ */
+
 #ifndef LEXANALYZER_H
 #define LEXANALYZER_H
 // above can also be achieved with #pragma once
