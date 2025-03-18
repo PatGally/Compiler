@@ -6,36 +6,36 @@
 using namespace std;
 #include "LexAnalyzer.h"
 
-// const vector<pair<string,regex>> tokenpairs = {
-//     {"t_and", regex("\\band\\b")},
-//     {"t_or", regex("\\bor\\b")},
-//     {"t_not", regex("\\bnot\\b")},
-//     {"t_true", regex("\btrue\\b")},
-//     {"t_false", regex("\\bfalse\\b")},
-//     {"t_input", regex("\\binput\\b")},
-//     {"t_output", regex("\\boutput\\b")},
-//     {"t_integer", regex("\\binteger\\b")},
-//     {"t_string", regex("\\bstring\\b")},
-//     {"t_if", regex("\\bif\\b")},
-//     {"t_else", regex("\\belse\\b")},
-//     {"t_while", regex("\\bwhile\\b")},
-//     {"b_main", regex("\\bmain\\b")},
-//     {"s_assign", regex("=")},
-//     {"s_comma", regex{","}},
-//     {"s_colon", regex(":")},
-//     {"s_lparen", regex("(")},
-//     {"s_lparen", regex(")")},
-//     {"s_semi", regex(";")},
-//     {"s_lbrace", regex("{")},
-//     {"s_rbrace", regex("}")},
-//     {"s_lt", regex("<")},
-//     {"s_le", regex("<=")},
-//     {"s_gt", regex(">")},
-//     {"s_ge", regex(">=")},
-//     {"s_plus", regex("+")},
-//     {"s_minus", regex("-")},
-//     {"s_mult", regex("*")}
-// };
+const vector<pair<string, regex>> tokenpairs = {
+    {"t_and", regex(R"(\band\b)")},
+    {"t_or", regex(R"(\bor\b)")},
+    {"t_not", regex(R"(\bnot\b)")},
+    {"t_true", regex(R"(\btrue\b)")},
+    {"t_false", regex(R"(\bfalse\b)")},
+    {"t_input", regex(R"(\binput\b)")},
+    {"t_output", regex(R"(\boutput\b)")},
+    {"t_integer", regex(R"(\binteger\b)")},
+    {"t_string", regex(R"(\bstring\b)")},
+    {"t_if", regex(R"(\bif\b)")},
+    {"t_else", regex(R"(\belse\b)")},
+    {"t_while", regex(R"(\bwhile\b)")},
+    {"b_main", regex(R"(\bmain\b)")},
+    {"s_assign", regex("=")},
+    {"s_comma", regex(",")},
+    {"s_colon", regex(":")},
+    {"s_lparen", regex(R"(\()")},
+    {"s_rparen", regex(R"(\))")},
+    {"s_semi", regex(";")},
+    {"s_lbrace", regex(R"(\{)")},
+    {"s_rbrace", regex(R"(\})")},
+    {"s_lt", regex("<")},
+    {"s_le", regex("<=")},
+    {"s_gt", regex(">")},
+    {"s_ge", regex(">=")},
+    {"s_plus", regex(R"(\+)")},
+    {"s_minus", regex("-")},
+    {"s_mult", regex(R"(\*)")}
+};
 
 int main() {
     ifstream lexemes("../lexTokens.txt");
