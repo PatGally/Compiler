@@ -5,36 +5,6 @@
 // lexeme pairs i.e.  s_and and t_begin begin t_int 27
 // Each pair appears on its own input line.
 // post: tokenmap has been populated - key: lexeme, value: token
-const vector<pair<string, regex>> tokenpairs = {
-    {"t_and", regex(R"(\band\b)")},
-    {"t_or", regex(R"(\bor\b)")},
-    {"t_not", regex(R"(\bnot\b)")},
-    {"t_true", regex(R"(\btrue\b)")},
-    {"t_false", regex(R"(\bfalse\b)")},
-    {"t_input", regex(R"(\binput\b)")},
-    {"t_output", regex(R"(\boutput\b)")},
-    {"t_integer", regex(R"(\binteger\b)")},
-    {"t_string", regex(R"(\bstring\b)")},
-    {"t_if", regex(R"(\bif\b)")},
-    {"t_else", regex(R"(\belse\b)")},
-    {"t_while", regex(R"(\bwhile\b)")},
-    {"b_main", regex(R"(\bmain\b)")},
-    {"s_assign", regex("=")},
-    {"s_comma", regex(",")},
-    {"s_colon", regex(":")},
-    {"s_lparen", regex(R"(\()")},
-    {"s_rparen", regex(R"(\))")},
-    {"s_semi", regex(";")},
-    {"s_lbrace", regex(R"(\{)")},
-    {"s_rbrace", regex(R"(\})")},
-    {"s_lt", regex("<")},
-    {"s_le", regex("<=")},
-    {"s_gt", regex(">")},
-    {"s_ge", regex(">=")},
-    {"s_plus", regex(R"(\+)")},
-    {"s_minus", regex("-")},
-    {"s_mult", regex(R"(\*)")}
-};
 LexAnalyzer::LexAnalyzer(istream& infile) {
 
   if(!infile){
@@ -81,7 +51,7 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
     regex identifier(R"([a-zA-Z_][a-zA-Z0-9_]*)");  // Matches identifiers (variable names, keywords)
     regex number(R"([0-9]+)");                      // Matches numbers
     regex text("\"([^\"]*)\"");                     // Matches string literals inside double quotes
-    regex symbols(R"([{}=+;()])");                  // Matches single-character symbols
+    regex symbols(R"([{}=+*;()<>\-])");             // Matches single-character symbols
 
     while (getline(infile, data)) {
         size_t pos = 0;

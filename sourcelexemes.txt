@@ -19,4 +19,22 @@ s_lparen : (
 t_text : hello world
 s_rparen : )
 s_semi : ;
+s_lt : <
+s_assign : =
+s_semi : ;
+s_lt : <
+s_plus : +
+s_semi : ;
+s_plus : +
+t_id : mainvar
+t_main : main
+s_semi : ;
+t_id : main3
+t_number : 3
+t_main : main
+s_gt : >
+s_lt : <
+s_lt : <
+s_assign : =
+s_mult : *
 s_rbrace : }

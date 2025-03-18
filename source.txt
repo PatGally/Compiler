@@ -3,4 +3,14 @@ main {
     integer x = 5;
     x + 1;
     output("hello world");
+    <=;
+    <+;+
+    mainvar
+    main;
+    main3
+    3main
+    >
+    <
+    <=
+    *
 }
