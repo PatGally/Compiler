@@ -23,17 +23,19 @@ main {
 
     if (x > y) {
         output "x is greater";
-    } else if (x == y) {
-        output "x is equal to y";
-    } else {
+        bool t = true;
+    }
+    else if (x < y) {
         output "x is smaller";
+        bool f = false;
     }
 
     string userInput = input;
 }
+
 m59_p6=9
 main;
 ==++*
-3main
+number = 3
 ad_fj = 9
-_fhf - 1;
+x = a / b

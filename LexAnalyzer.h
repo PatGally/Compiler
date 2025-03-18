@@ -21,6 +21,15 @@ private:
     // Store the unprocessed part of the source code
     string remaining;
 
+    bool identifierCheck(smatch match, regex identifier, map<string, string> tokenmap,
+        string remaining, ostream* outfile, size_t* pos);
+    bool numberCheck(smatch match, regex number, string remaining,
+        ostream* outfile, size_t* pos);
+    bool textCheck(smatch match, regex text, string remaining,
+        ostream* outfile, size_t* pos);
+    bool symbolCheck(smatch match, regex symbols, string remaining,
+        ostream* outfile, size_t* pos);
+
 public:
     LexAnalyzer(istream& infile);
     // pre: parameter refers to open data file consisting of token and
