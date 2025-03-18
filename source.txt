@@ -1,6 +1,39 @@
 main {
-    string fruit = "banana";
-    integer x = 5;
-    x + 1;
-    output("hello world");
+    integer x = 10;
+    integer y = 20;
+    string msg = "Hello, World!";
+
+    if (x < y) {
+        output "x is less than y";
+    } else {
+        output "x is greater than or equal to y";
+    }
+
+    while (x <= y) {
+        x = x + 1;
+    }
+
+    if (true and false or not false) {
+        output "Boolean logic works!";
+    }
+
+    integer sum = x + y;
+    integer diff = x - y;
+    integer product = x * y;
+
+    if (x > y) {
+        output "x is greater";
+    } else if (x == y) {
+        output "x is equal to y";
+    } else {
+        output "x is smaller";
+    }
+
+    string userInput = input;
 }
+m59_p6=9
+main;
+==++*
+3main
+ad_fj = 9
+_fhf - 1;
