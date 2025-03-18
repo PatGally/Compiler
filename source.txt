@@ -1,9 +1,9 @@
 main {
-    _integer x = 10;
+    integer x = 10;
     integer y = 20;
     string msg = "Hello, World!";
 
-    if (x < y) {
+    if (x <= y) {
         output "x is less than y";
     } else {
         output "x is greater than or equal to y";

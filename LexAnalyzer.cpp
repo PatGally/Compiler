@@ -82,13 +82,15 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
     regex number(R"([0-9]+)");                      // Matches numbers
     regex text("\"([^\"]*)\"");                     // Matches string literals inside double quotes
     regex symbols(R"([{}=+*;()<>\-])");               // Matches single-character symbols
+    bool found = false;
 
     while (getline(infile, data)) {
         size_t pos = 0;
         while (pos < data.length()) {
+            found = false;
             if (isspace(data[pos])) {
                 pos++; // Skip space
-                continue;
+                found = true;
             }
 
             smatch match;
@@ -97,7 +99,7 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
 
 
             // Check if it's an identifier
-            if (regex_search(remaining, match, identifier) && match.position() == 0) {
+            if (!found && regex_search(remaining, match, identifier) && match.position() == 0) {
                 if (remaining[0] != '_') {
                     cout << "match: " << match.str() << endl;
                     cout << "identifier: " << match.str() << endl;
@@ -111,31 +113,31 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
                     outfile << "Error" << " : " << match.str() << endl;
                     return;
                 }
-                continue;
+                found = true;
             }
 
             // Check if it's a number
-            if (regex_search(remaining, match, number) && match.position() == 0) {
+            if (!found && regex_search(remaining, match, number) && match.position() == 0) {
                 cout << "match: " << match.str() << endl;
                 cout << "number: " << match.str() << endl;
                 cout << "-----------------" << endl;
                 outfile << "t_number : " << match.str() << endl;
                 pos += match.length();
-                continue;
+                found = true;
             }
 
             // Check if it's text
-            if (regex_search(remaining, match, text) && match.position() == 0) {
+            if (! found && regex_search(remaining, match, text) && match.position() == 0) {
                 cout << "match: " << match.str() << endl;
                 cout << "text: " << match.str() << endl;
                 cout << "-----------------" << endl;
                 outfile << "t_text : " << match.str(1) << endl;
                 pos += match.length();
-                continue;
+                found = true;
             }
 
             // check if its symbol
-            if (regex_search(remaining, match, symbols) && match.position() == 0) {
+            if (!found && regex_search(remaining, match, symbols) && match.position() == 0) {
                 string symbol = match.str();
                 if (remaining.substr(0, 2) == "<=") { // skipping over match
                     symbol = "<=";
@@ -148,14 +150,17 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
                 string tokenType = (tokenmap.find(symbol) != tokenmap.end()) ? tokenmap[symbol] : "s_unknown";
                 outfile << tokenType << " : " << symbol << endl;
                 pos += symbol.length();
-                continue;
+                found = true;
 
             }
 
-            // Unknown token
-            cout << "Unknown : " << data[pos] << endl;
-            outfile << "Unknown : " << data[pos] << endl;
-            pos++;
+            if (!found){
+                // Unknown token
+                cout << "Unknown : " << data[pos] << endl;
+                outfile << "Unknown : " << data[pos] << endl;
+                pos++;
+            }
+
         }
     }
 }
