@@ -1,5 +1,4 @@
 #include "LexAnalyzer.h"
-#include <sstream>
 #include <regex>
 // pre: parameter refers to open data file consisting of token and
 // lexeme pairs i.e.  s_and and t_begin begin t_int 27
@@ -51,7 +50,7 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
     regex identifier(R"([a-zA-Z_][a-zA-Z0-9_]*)");  // Matches identifiers (variable names, keywords)
     regex number(R"([0-9]+)");                      // Matches numbers
     regex text("\"([^\"]*)\"");                     // Matches string literals inside double quotes
-    regex symbols(R"([{}=+*;()<>\-])");               // Matches single-character symbols
+    regex symbols(R"([{}=+*;:,()<>\-])");               // Matches single-character symbols
     bool found = false;
 
     while (getline(infile, data)) {

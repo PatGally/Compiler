@@ -1,41 +1,52 @@
 main {
-    integer x = 10;
-    integer y = 20;
-    string msg = "Hello, World!";
+    integer x = 5;
+    integer y = 6;
+    x = y * y;
+    x = x - 15;
+    std::string name = "John";
+    isXSmaller = false;
 
-    if (x <= y) {
-        output "x is less than y";
-    } else {
-        output "x is greater than or equal to y";
+     if(x > 50 or y < 50){
+            output("x or y is over 50");
+     }
+    if(x <= y){
+        output("x is less than or equal to y.");
+        isXsmaller = true;
+    }
+    if (y >= x and not isXSmaller){
+        output("y is greater than or equal to x");
     }
 
-    while (x <= y) {
-        x = x + 1;
+    integer a = 7;
+    integer b = 6;
+    isItTrue(integer a, integer b);
+
+    integer i = 0;
+    while(i < 5){
+        x = x - y;
+        if(x < 0){
+            output("X is less than 0");
+        }
+        else if(x > 0){
+            output("X is greater than 0");
+        }
+        i = i + 1;
     }
 
-    if (true and false or not false) {
-        output "Boolean logic works!";
-    }
+    userInput = input("Enter a number 1-5: ");
 
-    integer sum = x + y;
-    integer diff = x - y;
-    integer product = x * y;
-
-    if (x > y) {
-        output "x is greater";
-        bool t = true;
-    }
-    else if (x < y) {
-        output "x is smaller";
-        bool f = false;
-    }
-
-    string userInput = input;
 }
 
-m59_p6=9
-main;
-==++*
-number = 3
-ad_fj = 9
-/
+isItTrue(integer a, integer b){
+    if(a > b){
+        output("a is bigger  b");
+    }
+    else{
+        output("b is bigger than a");
+    }
+}
+
+std::string _john = "John took a walk in the park.";
+
+
+
