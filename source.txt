@@ -38,4 +38,4 @@ main;
 ==++*
 number = 3
 ad_fj = 9
-x = a / b
+/

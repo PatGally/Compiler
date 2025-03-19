@@ -112,7 +112,7 @@ void LexAnalyzer::scanFile(istream& infile, ostream& outfile) {
 
             if (!found){
                 // Unknown token
-                cout << "Error: Unknown Lexeme: " << data[pos] << endl;
+                cerr << "Error: Unknown Lexeme: " << data[pos] << endl;
                 outfile << "Error: Unknown Lexeme: " << data[pos] << endl;
                 return;
             }

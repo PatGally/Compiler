@@ -136,7 +136,4 @@ t_number : 3
 t_id : ad_fj
 s_assign : =
 t_number : 9
-t_id : x
-s_assign : =
-t_id : a
-Unknown : /
+Error: Unknown Lexeme: /
