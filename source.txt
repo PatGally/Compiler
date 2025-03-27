@@ -1,4 +1,4 @@
-main {
+3main {
     integer x = 5;
     integer y = 6;
     x = y * y;
@@ -45,8 +45,6 @@ isItTrue(integer a, integer b){
         output("b is bigger than a");
     }
 }
-
-std::string _john = "John took a walk in the park.";
 
 
 
