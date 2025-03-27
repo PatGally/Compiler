@@ -63,6 +63,7 @@ bool SyntaxAnalyzer::arithop(){
         return false;
     }
 
+//TODO: Do not touch syntaxAnalyzer or parse til class on tuesday
 SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
     // pre: 1st parameter consists of an open file containing a source code's
     //	valid scanner/lexical analyzer output.  This data must be in the form: token : lexeme
