@@ -1,4 +1,4 @@
-3main {
+main {
     integer x = 5;
     integer y = 6;
     x = y * y;
