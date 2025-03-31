@@ -114,9 +114,9 @@ bool SyntaxAnalyzer::expr(){
          if(logicop() && simpleexpr()){
            return true;
          }
-         else if(!logicop() && !simpleexpr()){
-           tokitr++; lexitr++;
-           return true;
+         if(!logicop() && !simpleexpr()){
+             tokitr++; lexitr++;
+             return true;
          }
        }
      }
