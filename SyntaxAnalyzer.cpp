@@ -6,7 +6,10 @@ bool SyntaxAnalyzer::vdecassign(){
       return false;
 }
 bool SyntaxAnalyzer::stmtlist(){
-//    Emma
+    // Emma - check this
+    while (tokitr != tokens.end() && stmt() ) {
+        return true;
+    }
       return false;
 }
 int SyntaxAnalyzer::stmt(){
@@ -22,8 +25,21 @@ bool SyntaxAnalyzer::ifstmt(){
       return false;
 }
 bool SyntaxAnalyzer::elsepart(){
-//    Emma
-      return false;
+    // Emma
+    if (tokitr != tokens.end() && *tokitr == "t_else") {
+        ++tokitr; ++lexitr;
+        if (tokitr != tokens.end() && *tokitr == "s_lbrace") {
+            ++tokitr; ++lexitr;
+            if (stmtlist()) {
+                if (tokitr != tokens.end() && *tokitr == "s_rbrace") {
+                    ++tokitr; ++lexitr;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+      return true; // empty set is valid
 }
 bool SyntaxAnalyzer::whilestmt(){
      //    Patrick
@@ -76,6 +92,19 @@ bool SyntaxAnalyzer::inputstmt(){
 }
 bool SyntaxAnalyzer::outputstmt(){
 //    Emma
+    if (tokitr != tokens.end() && *tokitr == "t_output") {
+        ++tokitr; ++lexitr;
+        if (tokitr != tokens.end() && *tokitr == "s_lparen") {
+            ++tokitr; ++lexitr;
+            if (tokitr != tokens.end() && (expr() || *tokitr == "t_text")) { //check this
+                ++tokitr; ++lexitr;
+                if (tokitr != tokens.end() && *tokitr == "s_rparen") {
+                    ++tokitr; ++lexitr;
+                    return true;
+                }
+            }
+        }
+    }
       return false;
 }
 bool SyntaxAnalyzer::expr(){
@@ -99,10 +128,28 @@ bool SyntaxAnalyzer::simpleexpr(){
 }
 bool SyntaxAnalyzer::term(){
 //    Emma
+    if (tokitr != tokens.end()) {
+        if (*tokitr == "t_number" || *tokitr == "t_id" || *tokitr == "t_text") {
+            ++tokitr; ++lexitr;
+            return true;
+        } else if (*tokitr == "s_lparen") {
+            ++tokitr; ++lexitr;
+            if (expr()) {
+                if (tokitr != tokens.end() && *tokitr == "s_rparen") {
+                    ++tokitr; ++lexitr;
+                    return true;
+                }
+            }
+        }
+    }
       return false;
 }
 bool SyntaxAnalyzer::logicop(){
 //    Emma
+    if (tokitr != tokens.end() && (*tokitr == "t_and" || *tokitr == "t_or")) {
+        ++tokitr; ++lexitr;
+        return true;
+    }
       return false;
 }
 bool SyntaxAnalyzer::arithop(){
