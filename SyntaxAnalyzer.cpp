@@ -309,6 +309,13 @@ SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
                 }
             }
         }
+        auto const lineNumber = distance(tokens.begin(), tokitr) + 1;
+        if (tokitr != tokens.end()) {
+            cout << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
+        }
+        else {
+            cout<< "Error reached the end of file while reading on line " << lineNumber << endl;
+        }
     }
     return false;
 }
