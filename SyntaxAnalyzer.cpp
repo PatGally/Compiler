@@ -1,5 +1,8 @@
 #include"SyntaxAnalyzer.h"
 
+bool declarationCheck() {
+
+}
 //private methods
 bool SyntaxAnalyzer::vdecassign(){
 //   Aksel
@@ -19,7 +22,8 @@ bool SyntaxAnalyzer::vdecassign(){
         }
     }
     return false;
-}bool SyntaxAnalyzer::stmtlist(){
+}
+bool SyntaxAnalyzer::stmtlist(){
     // Emma - check this
     auto startItr = tokitr;
     bool hasStmt = false;
