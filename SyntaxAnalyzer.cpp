@@ -272,6 +272,8 @@ SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
         tokens.insert(tokens.end(), token);
         lexemes.insert(lexemes.end(), lexeme);
     }
+    tokitr = tokens.begin();
+    lexitr = lexemes.begin();
 }
 
 
