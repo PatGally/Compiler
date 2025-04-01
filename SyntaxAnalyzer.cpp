@@ -1,12 +1,10 @@
 #include"SyntaxAnalyzer.h"
 
 //private methods
-bool declarationCheck() {
+bool SyntaxAnalyzer::declarationCheck() {
     return true;
 }
-bool type() {
-    return true;
-}
+
 bool SyntaxAnalyzer::vdecassign(){
 //   Aksel
     if (tokitr != tokens.end() && (*tokitr == "t_integer" || *tokitr == "t_string")) {

@@ -13,9 +13,8 @@ private:
     // map of variables and their datatype
     // i.e. sum t_integer
     map<string, string> symboltable;
-    bool declarationCheck();
-
     // other private methods
+    bool declarationCheck();
     bool type();
     bool vdecassign();
     //   Aksel
