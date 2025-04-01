@@ -1,8 +1,24 @@
 #include"SyntaxAnalyzer.h"
+#include <vector>
+#include <unordered_set>
+#include <cstddef>
 
 //private methods
 bool SyntaxAnalyzer::declarationCheck() {
-    return true;
+    // Emma
+    std::unordered_set<std::string> declaredVars;
+    bool isValid = true;
+    for (size_t i = 0; i < tokens.size(); i++) {
+        if (tokens[i] == "t_id") {
+            std::string varName = lexemes[i];
+            if (i > 1 && (tokens[i-2] == "integer" || tokens[i-2] == "string")){
+                declaredVars.insert(varName);
+            } else if (!declaredVars.contains(varName)) {
+                isValid = false;
+            }
+        }
+    }
+    return isValid;
 }
 
 bool SyntaxAnalyzer::vdecassign(){
