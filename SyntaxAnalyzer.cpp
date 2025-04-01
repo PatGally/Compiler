@@ -19,13 +19,20 @@ bool SyntaxAnalyzer::vdecassign(){
         }
     }
     return false;
-}
-bool SyntaxAnalyzer::stmtlist(){
+}bool SyntaxAnalyzer::stmtlist(){
     // Emma - check this
+    auto startItr = tokitr;
+    bool hasStmt = false;
     while (tokitr != tokens.end() && stmt() ) {
-        return true;
+        hasStmt = true;
     }
-      return false;
+    if (!hasStmt) {
+        if (tokitr == startItr) {
+            return true;
+        }
+        return false;
+    }
+    return true;
 }
 int SyntaxAnalyzer::stmt(){
     //    Patrick
