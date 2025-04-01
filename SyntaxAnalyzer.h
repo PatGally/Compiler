@@ -15,6 +15,7 @@ private:
     map<string, string> symboltable;
 
     // other private methods
+    bool type();
     bool vdecassign();
     //   Aksel
     bool stmtlist();

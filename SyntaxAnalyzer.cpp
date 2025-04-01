@@ -1,6 +1,9 @@
 #include"SyntaxAnalyzer.h"
 
 //private methods
+bool type() {
+    return false;
+}
 bool SyntaxAnalyzer::vdecassign(){
 //   Aksel
     if (tokitr != tokens.end() && (*tokitr == "t_integer" || *tokitr == "t_string")) {
@@ -19,8 +22,9 @@ bool SyntaxAnalyzer::vdecassign(){
         }
     }
     return false;
-}bool SyntaxAnalyzer::stmtlist(){
-    // Emma - check this
+}
+bool SyntaxAnalyzer::stmtlist(){
+    // Emma
     auto startItr = tokitr;
     bool hasStmt = false;
     while (tokitr != tokens.end() && stmt() ) {
