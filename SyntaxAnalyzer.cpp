@@ -29,7 +29,7 @@ bool SyntaxAnalyzer::stmtlist(){
 }
 int SyntaxAnalyzer::stmt(){
     //    Patrick
-    if(tokitr != tokens.end() && ifstmt() || whilestmt() || assignstmt() || inputstmt() || outputstmt()){
+    if(tokitr != tokens.end() && ifstmt() || whilestmt() || assignstmt() || inputstmt() || outputstmt() || vdecassign()){
       return true;
     }
     return false;
