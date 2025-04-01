@@ -43,8 +43,13 @@ bool SyntaxAnalyzer::vdecassign(){
     // Emma - check this
     auto startItr = tokitr;
     bool hasStmt = false;
+    auto previousPointer = tokitr;
     while (tokitr != tokens.end() && stmt() ) {
         hasStmt = true;
+        previousPointer = tokitr;
+    }
+    if (previousPointer != tokitr) {
+        return false;
     }
     if (!hasStmt) {
         if (tokitr == startItr) {
