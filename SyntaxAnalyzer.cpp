@@ -293,6 +293,7 @@ SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
     }
     tokitr = tokens.begin();
     lexitr = lexemes.begin();
+
 }
 
 
@@ -302,5 +303,24 @@ SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
     // If an error occurs, a message prints indicating the token/lexeme pair
     // that caused the error.
     // If no error, vectors contain syntactically correct source code
+
+    if (tokitr != tokens.end() && *tokitr == "t_main") {
+        tokitr++; lexitr++;
+        if (tokitr != tokens.end() && *tokitr == "s_lbrace") {
+            tokitr++; lexitr++;
+            if (stmtlist()) {
+                if (tokitr != tokens.end() && *tokitr == "s_rbrace") {
+                    return true;
+                }
+            }
+        }
+        auto const lineNumber = distance(tokens.begin(), tokitr) + 1;
+        if (tokitr != tokens.end()) {
+            cout << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
+        }
+        else {
+            cout<< "Error reached the end of file while reading on line " << lineNumber << endl;
+        }
+    }
     return false;
 }
