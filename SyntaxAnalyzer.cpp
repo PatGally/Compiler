@@ -248,7 +248,32 @@ SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
     // pre: 1st parameter consists of an open file containing a source code's
     //	valid scanner/lexical analyzer output.  This data must be in the form: token : lexeme
     // post: the vectors have been populated
+
+    if(!infile){
+        cout<< "Error in opening file!"<<endl;
+    }
+    string data;
+    while (getline(infile, data)) {
+        int position = 0;
+        bool found = false;
+        int i = 0;
+
+        while (i < data.length() && !found) {
+            if (data[i] == ' : ') {
+                position = i;
+                found = true;
+            }
+            i++;
+        }
+
+        string token = data.substr(0, position);
+        string lexeme = data.substr(position + 1, data.length() - position - 1);
+
+        tokens.insert(tokens.end(), token);
+        lexemes.insert(lexemes.end(), lexeme);
+    }
 }
+
 
     bool SyntaxAnalyzer::parse(){
     // pre: none
