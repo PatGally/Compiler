@@ -4,6 +4,6 @@ x = x - 7;
 x = x + 2;
 output(x + x)
 if(x < 99){
-    output("Oh no we are less!")
+    output("Less than 99")
 }
 }

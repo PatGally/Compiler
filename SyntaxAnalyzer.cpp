@@ -314,7 +314,7 @@ SyntaxAnalyzer::SyntaxAnalyzer(istream& infile){
     bool isValid = declarationCheck();
     auto const lineNumber = distance(tokens.begin(), tokitr) + 1;
     if (!isValid) {
-        cerr << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
+        cerr << "Error invalid ID: " << *tokitr <<  " " << *lexitr << " on line " << lineNumber<< endl;
         return;
     }
     //Reset them back to beginning after check
@@ -338,10 +338,6 @@ SyntaxAnalyzer::SyntaxAnalyzer(istream& infile){
             if (stmtlist()) {
                 if (tokitr != tokens.end() && *tokitr == "s_rbrace") {
                     cout<< "Syntax Output Success!"<<endl;
-                    tokitr = tokens.begin(); lexitr = lexemes.begin();
-                    for (; tokitr != tokens.end() && lexitr != lexemes.end(); ++tokitr, ++lexitr) {
-                        cout << "iter: " << *tokitr << " lex: " << *lexitr << endl;
-                    }
                     return true;
                 }
             }
@@ -356,7 +352,7 @@ SyntaxAnalyzer::SyntaxAnalyzer(istream& infile){
     }
     else {
         auto const lineNumber = distance(tokens.begin(), tokitr) + 1;
-        cerr << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
+            cerr << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
     }
     return false;
 }
