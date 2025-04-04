@@ -40,7 +40,7 @@ bool SyntaxAnalyzer::vdecassign(){
     }
     return false;
 }bool SyntaxAnalyzer::stmtlist(){
-    // Emma - check this
+    // Emma
     auto startItr = tokitr;
     bool hasStmt = false;
     auto previousPointer = tokitr;

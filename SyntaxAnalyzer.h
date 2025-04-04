@@ -1,3 +1,11 @@
+/*
+* CSC4450 - HW 4 Part 2 - Syntax Analyzer
+* Members: Patrick Gallavan, Emma Camp, Aksel Del Toro
+* Build a Syntax Analyzer that reads token : lexeme pairs from a source file,
+* checks for valid syntax based on the language's grammar, and reports any
+* syntax errors with the specific token/lexeme that caused them.
+* Also builds a symbol table for declared variables and their types.
+*/
 #ifndef SYNTAXANALYZER_H
 #define SYNTAXANALYZER_H
 #include <iostream>
