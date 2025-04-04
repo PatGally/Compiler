@@ -1,50 +1,9 @@
-main {
-    integer x = 5;
-    integer y = 6;
-    x = y * y;
-    x = x - 15;
-    std::string name = "John";
-    isXSmaller = false;
-
-     if(x > 50 or y < 50){
-            output("x or y is over 50");
-     }
-    if(x <= y){
-        output("x is less than or equal to y.");
-        isXsmaller = true;
-    }
-    if (y >= x and not isXSmaller){
-        output("y is greater than or equal to x");
-    }
-
-    integer a = 7;
-    integer b = 6;
-    isItTrue(integer a, integer b);
-
-    integer i = 0;
-    while(i < 5){
-        x = x - y;
-        if(x < 0){
-            output("X is less than 0");
-        }
-        else if(x > 0){
-            output("X is greater than 0");
-        }
-        i = i + 1;
-    }
-
-    userInput = input("Enter a number 1-5: ");
-
+main{
+integer x = 5 * 6;
+x = x - 7;
+x = x + 2;
+output(x + x)
+if(x < 99){
+    output("Oh no we are less!")
 }
-
-isItTrue(integer a, integer b){
-    if(a > b){
-        output("a is bigger  b");
-    }
-    else{
-        output("b is bigger than a");
-    }
 }
-
-
-

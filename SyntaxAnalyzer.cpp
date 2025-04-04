@@ -5,18 +5,35 @@
 
 //private methods
 bool SyntaxAnalyzer::declarationCheck() {
-    // Emma
+    //Emma and Patrick
     std::unordered_set<std::string> declaredVars;
     bool isValid = true;
-    for (size_t i = 0; i < tokens.size(); i++) {
-        if (tokens[i] == "t_id") {
+    size_t i = 0;
+    while ( i < tokens.size() && isValid) {
+        if (*tokitr == "t_id") {
             std::string varName = lexemes[i];
-            if (i > 1 && (tokens[i-2] == "integer" || tokens[i-2] == "string")){
-                declaredVars.insert(varName);
-            } else if (!declaredVars.contains(varName)) {
+            auto tempTokitr = tokitr;
+            tempTokitr -= 1;
+            if (*tempTokitr == "t_integer" || *tempTokitr == "t_string" || declaredVars.contains(varName)){
+                if (!declaredVars.contains(varName)) {
+                    declaredVars.insert(varName);
+                    tokitr++; lexitr++;
+                }
+                else if (*tempTokitr == "t_integer" || *tempTokitr == "t_string"){
+                     isValid = false;
+                }
+                else {
+                    tokitr++; lexitr++;
+                }
+            } else {
                 isValid = false;
             }
         }
+        else {
+            tokitr++;
+            lexitr++;
+        }
+        i++;
     }
     return isValid;
 }
@@ -40,7 +57,7 @@ bool SyntaxAnalyzer::vdecassign(){
     }
     return false;
 }bool SyntaxAnalyzer::stmtlist(){
-    // Emma - check this
+    // Emma
     auto startItr = tokitr;
     bool hasStmt = false;
     auto previousPointer = tokitr;
@@ -61,7 +78,7 @@ bool SyntaxAnalyzer::vdecassign(){
 }
 int SyntaxAnalyzer::stmt(){
     //    Patrick
-    if (tokitr != tokens.end()) return false;
+    if (tokitr == tokens.end()) return false;
     
     if(ifstmt() || whilestmt() || assignstmt() || inputstmt() || outputstmt() || vdecassign()){
       return true;
@@ -178,8 +195,10 @@ bool SyntaxAnalyzer::outputstmt(){
         ++tokitr; ++lexitr;
         if (tokitr != tokens.end() && *tokitr == "s_lparen") {
             ++tokitr; ++lexitr;
-            if (tokitr != tokens.end() && (expr() || *tokitr == "t_text")) { //check this
-                ++tokitr; ++lexitr;
+            if (tokitr != tokens.end() && (expr() || *tokitr == "t_text")) {
+                if (*tokitr == "t_text") {
+                    tokitr++;lexitr++;
+                }
                 if (tokitr != tokens.end() && *tokitr == "s_rparen") {
                     ++tokitr; ++lexitr;
                     return true;
@@ -197,7 +216,6 @@ bool SyntaxAnalyzer::expr(){
            return true;
          }
          if(!logicop() && !simpleexpr()){
-             tokitr++; lexitr++;
              return true;
          }
        }
@@ -208,7 +226,6 @@ bool SyntaxAnalyzer::simpleexpr(){
 //    Aksel
     if (tokitr != tokens.end() && term()) {
         if (tokitr != tokens.end() && (arithop() || relop())) {
-            ++tokitr; ++lexitr;
             if (!term()) {
                 return false;
             }
@@ -262,14 +279,13 @@ bool SyntaxAnalyzer::relop(){
         return false;
 }
 
-//TODO: Do not touch syntaxAnalyzer or parse til class on tuesday
-SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
+SyntaxAnalyzer::SyntaxAnalyzer(istream& infile){
     // pre: 1st parameter consists of an open file containing a source code's
     //	valid scanner/lexical analyzer output.  This data must be in the form: token : lexeme
     // post: the vectors have been populated
-
+    //Patrick and Askel
     if(!infile){
-        cout<< "Error in opening file!"<<endl;
+        cerr<< "Error in opening file!"<<endl;
     }
     string data;
     while (getline(infile, data)) {
@@ -278,19 +294,30 @@ SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
         int i = 0;
 
         while (i < data.length() && !found) {
-            if (data[i] == ' : ') {
+            if (data[i] == ':') {
                 position = i;
                 found = true;
             }
             i++;
         }
 
-        string token = data.substr(0, position);
+        string token = data.substr(0, position -1);
         string lexeme = data.substr(position + 1, data.length() - position - 1);
 
         tokens.insert(tokens.end(), token);
         lexemes.insert(lexemes.end(), lexeme);
+        symboltable.insert({lexeme, token});
     }
+    tokitr = tokens.begin();
+    lexitr = lexemes.begin();
+
+    bool isValid = declarationCheck();
+    auto const lineNumber = distance(tokens.begin(), tokitr) + 1;
+    if (!isValid) {
+        cerr << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
+        return;
+    }
+    //Reset them back to beginning after check
     tokitr = tokens.begin();
     lexitr = lexemes.begin();
 
@@ -303,24 +330,33 @@ SyntaxAnalyzer::SyntaxAnalyzer(std::istream& infile){
     // If an error occurs, a message prints indicating the token/lexeme pair
     // that caused the error.
     // If no error, vectors contain syntactically correct source code
-
+    //Patrick
     if (tokitr != tokens.end() && *tokitr == "t_main") {
         tokitr++; lexitr++;
         if (tokitr != tokens.end() && *tokitr == "s_lbrace") {
             tokitr++; lexitr++;
             if (stmtlist()) {
                 if (tokitr != tokens.end() && *tokitr == "s_rbrace") {
+                    cout<< "Syntax Output Success!"<<endl;
+                    tokitr = tokens.begin(); lexitr = lexemes.begin();
+                    for (; tokitr != tokens.end() && lexitr != lexemes.end(); ++tokitr, ++lexitr) {
+                        cout << "iter: " << *tokitr << " lex: " << *lexitr << endl;
+                    }
                     return true;
                 }
             }
         }
         auto const lineNumber = distance(tokens.begin(), tokitr) + 1;
         if (tokitr != tokens.end()) {
-            cout << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
+            cerr << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
         }
         else {
-            cout<< "Error reached the end of file while reading on line " << lineNumber << endl;
+            cerr<< "Error reached the end of file while reading on line " << lineNumber << endl;
         }
+    }
+    else {
+        auto const lineNumber = distance(tokens.begin(), tokitr) + 1;
+        cerr << "Error: " << *tokitr <<  " " << *lexitr << " is invalid on line " << lineNumber<< endl;
     }
     return false;
 }
