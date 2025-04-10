@@ -294,7 +294,7 @@ SyntaxAnalyzer::SyntaxAnalyzer(istream& infile){
         int i = 0;
 
         while (i < data.length() && !found) {
-            if (data[i] == ':') {
+            if (data[i] == ' ') {
                 position = i;
                 found = true;
             }

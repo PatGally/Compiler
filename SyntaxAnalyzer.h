@@ -23,7 +23,7 @@ private:
     map<string, string> symboltable;
     // other private methods
     bool declarationCheck();
-    bool type();
+    //Emma and Patrick
     bool vdecassign();
     //   Aksel
     bool stmtlist();

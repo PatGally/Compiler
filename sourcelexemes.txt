@@ -34,7 +34,7 @@ s_rparen : )
 s_lbrace : {
 t_output : output
 s_lparen : (
-t_text : Oh no we are less!
+t_text : Less than 99!
 s_rparen : )
 s_rbrace : }
 s_rbrace : }

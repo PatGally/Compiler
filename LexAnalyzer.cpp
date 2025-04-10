@@ -163,7 +163,7 @@ bool LexAnalyzer::symbolCheck(smatch match, regex symbols,
             symbol = ">=";
         }
         string tokenType = (tokenmap.find(symbol) != tokenmap.end()) ? tokenmap[symbol] : "s_unknown";
-        *outfile << tokenType << " : " << symbol << endl;
+        *outfile << tokenType << " " << symbol << endl;
         *pos += symbol.length();
         return true;
     }

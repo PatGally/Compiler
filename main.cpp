@@ -1,12 +1,8 @@
-#include <iostream>
 #include <fstream>
-#include <vector>
 #include <regex>
-#include <map>
 
 #include "SyntaxAnalyzer.h"
 using namespace std;
-#include "LexAnalyzer.h"
 
 
 
