@@ -10,7 +10,7 @@ class Expr;
 class Stmt;
 
 // Runtime Global Variables
-int pc;  // program counter
+int pc;  // program counter, is incremented after excution method is called or gets assigned to the line it needs to jump or loop up to
 vector<string> lexemes;
 vector<string> tokens;
 vector<string>::iterator lexitr;
@@ -57,6 +57,7 @@ public:
 };
 
 class InFixExpr : public Expr{	//Might want to change
+//Patrick
 private:
 	vector<Expr *> exprs;
 	vector<string> ops;  // tokens of operators
@@ -66,7 +67,7 @@ public:
 	string toString();
 };
 
-class Stmt{ // statements are executed!
+class Stmt {// statements are executed!
 private:
 	string name;
 public:
@@ -77,17 +78,20 @@ public:
 };
 
 class AssignStmt : public Stmt{ // Stores pointer to expression
+//Patrick
 private:
 	string var;
 	Expr* p_expr;
 public:
-	AssignStmt();
+	AssignStmt(){
+
+	}
 	~AssignStmt();
 	string toString();
 	void execute();
 };
 
-class InputStmt : public Stmt{	//
+class InputStmt : public Stmt{
 private:
 	string var;
 public:
@@ -108,6 +112,7 @@ public:
 };
 
 class ExprOutStmt : public Stmt{
+  //Patrick
 private:
 	Expr* p_expr;
 public:
@@ -155,9 +160,12 @@ private:
 	void buildIf();
 	void buildWhile();
 	void buildStmt();
+        //Patrick
 	void buildAssign();
+        //Patrick
 	void buildInput();
 	void buildOutput();
+        //Patrick
 	// use one of the following buildExpr methods
 	void buildExpr(Expr*&);      Expr* buildExpr();
 	// headers for populate methods may not change
@@ -169,12 +177,13 @@ public:
 	Compiler(istream& source, istream& symbols){
 		// build precMap - include logical, relational, arithmetic operators
 
-		populateTokenLexemes(source);
-		populateSymbolTable(symbols);
+		populateTokenLexemes(source);	//Copy over lexemes data file readin code
+		populateSymbolTable(symbols);	//Reading in the symbol table output file in variable name, data type : lexeme, token
 	}
 	// The compile method is responsible for getting the instruction
 	// table built.  It will call the appropriate build methods.
 	bool compile();
+        //Patrick
 	// The run method will execute the code in the instruction
 	// table.
 	void run();
@@ -184,7 +193,7 @@ public:
 void dump();
 int main(){
 
-	ifstream source("data.txt");
+	ifstream source("sourcelexemes.txt");
 	ifstream symbols("vars.txt");
 	if (!source || !symbols) exit(-1);
 	Compiler c(source, symbols);
