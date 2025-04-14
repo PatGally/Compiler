@@ -113,7 +113,9 @@ public:
         var = id;
         p_expr = expr;
 	}
-	~AssignStmt();
+	~AssignStmt(){
+        delete p_expr;
+    }
 	string toString(){
         return "Assign " + var + " = " + p_expr->toString();
     }
