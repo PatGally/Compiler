@@ -17,7 +17,7 @@ vector<string>::iterator lexitr;
 vector<string>::iterator tokitr;
 map<string, int> vartable; 	// map of variables and their values
 vector<Stmt *> insttable; 		// table of instructions
-map<string, string> symboltable; // map of variables to datatype (i.e. sum t_integer)
+map<string, string> symboltable; // map of variables to datatype (i.e. sum t_integer) variable name : datatype
 
 
 // Runtime Global Methods
@@ -29,7 +29,6 @@ void dump(); 				// prints vartable, instable, symboltable
 // Classes Stmt and Expr
 // It is assumed some methods in statement and expression objects will change and
 // you may need to add a few new ones.
-
 
 class Expr{ // expressions are evaluated!
 public:
@@ -63,13 +62,35 @@ private:
 	vector<string> ops;  // tokens of operators
 public:
 	~InFixExpr(){
-       for(Expr* expr: exprs){
-         delete expr;
-       }
-       exprs.clear();
+        for (size_t i = 0; i < exprs.size(); ++i) {
+            delete exprs[i];
+        }
+    }
+	int eval(){
+        int result = exprs[0]->eval();
+        for (size_t i = 0; i < ops.size(); ++i) {
+            if (ops[i] == "+") {
+                result += exprs[i + 1]->eval();
+            } else if (ops[i] == "-") {
+                result -= exprs[i + 1]->eval();
+            } else if (ops[i] == "*") {
+                result *= exprs[i + 1]->eval();
+            } else if (ops[i] == "/") {
+                result /= exprs[i + 1]->eval();
+            }
+        }
+        return result;
 	}
-	int eval();
-	string toString();
+	string toString(){
+        string result = "";
+        for (size_t i = 0; i < exprs.size(); ++i) {
+            result += exprs[i]->toString();
+            if (i < ops.size()) {
+                result += " " + ops[i] + " ";
+            }
+        }
+        return result;
+    }
 };
 
 class Stmt {// statements are executed!
@@ -92,110 +113,35 @@ public:
         var = id;
         p_expr = expr;
 	}
-	~AssignStmt(){
-       delete p_expr;
-	}
-	string toString();
-	void execute();
-};
-
-class InputStmt : public Stmt{
-  // Emma
-private:
-	string var;
-public:
-	InputStmt();
-	~InputStmt();
-	string toString();
-	void execute();
-	void setVar(const std::string& v);
-
-};
-
-class StrOutStmt : public Stmt{
-private:
-	string value;
-public:
-// Runtime Global Variables
-int pc;// program counter, is incremented after excution method is called or gets assigned to the line it needs to jump or loop up to
-vector<string> lexemes;
-vector<string> tokens;
-vector<string>::iterator lexitr;
-vector<string>::iterator tokitr;
-map<string, int> vartable; 	// map of variables and their values
-vector<Stmt *> insttable; 		// table of instructions
-map<string, string> symboltable; // map of variables to datatype (i.e. sum t_integer)
-
-
-// Runtime Global Methods
-void dump(); 				// prints vartable, instable, symboltable
-
-// You may need a few additional global methods to manipulate the global variables
-
-
-// Classes Stmt and Expr
-// It is assumed some methods in statement and expression objects will change and
-// you may need to add a few new ones.
-
-
-class Expr{ // expressions are evaluated!
-public:
-	virtual int eval() = 0;	//Evaluates expression
-	virtual string toString() = 0;	//Takes contents of something and displays it through dump
-	virtual ~Expr(){}	//Destroys object correctly
-};
-
-class ConstExpr : public Expr{	//Does constant expressions, do we need a destructor?
-private:
-	int value;
-public:
-	ConstExpr(int val);
-	int eval();
-	string toString();
-};
-
-class IdExpr : public Expr{	//Id expression, you have a variable, need to look for value in variable table
-private:
-	string id;
-public: // Emma
-	IdExpr(string s);
-	int eval();
-	string toString();
-};
-
-class InFixExpr : public Expr{	//Might want to change
-//Patrick
-private:
-	vector<Expr *> exprs;
-	vector<string> ops;  // tokens of operators
-public:
-	~InFixExpr();
-	int eval();
-	string toString();
-};
-
-class Stmt {// statements are executed!
-private:
-	string name;
-public:
-	Stmt(){}
-	virtual ~Stmt(){};
-	virtual string toString() = 0;
-	virtual void execute() = 0;
-};
-
-class AssignStmt : public Stmt{ // Stores pointer to expression
-//Patrick
-private:
-	string var;
-	Expr* p_expr;
-public:
-	AssignStmt(){
-
-	}
 	~AssignStmt();
-	string toString();
-	void execute();
+	string toString(){
+        return "Assign " + var + " = " + p_expr->toString();
+    }
+	void execute() {
+		if (symboltable.find(var) != symboltable.end()) {
+			string varType = symboltable[var];
+			string exprType;
+
+			// Determine the type of the evaluated expression
+			if (p_expr->toString().find_first_not_of("0123456789") == string::npos) {
+				exprType = "t_integer"; // All characters are digits
+			} else {
+				exprType = "t_string"; // Contains non-digit characters
+			}
+
+			// Check for type mismatch
+			if (varType != exprType) {
+				cerr << "Type Error: Cannot assign " << exprType << " to " << varType << endl;
+				exit(-1);
+			}
+
+			vartable[var] = p_expr->eval();
+		} else {
+			cerr << "Error: Variable not initialized" << endl;
+			exit(-1);
+		}
+		++pc;
+	}
 };
 
 class InputStmt : public Stmt{
@@ -205,21 +151,22 @@ private:
 public:
 	InputStmt();
 	~InputStmt();
+	void setVar(const string& v);
 	string toString();
 	void execute();
 };
 
-class StrOutStmt : public Stmt{
-private:
-	string value;
-public:
-	StrOutStmt(string val){
-        value = val;
-    }
-	~StrOutStmt();
-	string toString();
-	void execute();
-}; 
+class StrOutStmt : public Stmt {
+	private:
+		string value;
+	public:
+		StrOutStmt(const string& val) { // Use const reference to avoid unnecessary copying
+			value = val;
+		}
+		~StrOutStmt() {} // Define the destructor
+		string toString();
+		void execute();
+};
 
 class ExprOutStmt : public Stmt{
   //Patrick
@@ -232,8 +179,13 @@ public:
 	~ExprOutStmt(){
           delete p_expr;
 	}
-	string toString();
-	void execute();
+	string toString (){
+        return "Output " + p_expr->toString();
+    }
+	void execute(){
+        cout << p_expr->eval() << endl;
+        ++pc;
+    }
 };
 
 class IfStmt : public Stmt{
@@ -305,6 +257,7 @@ private:
         Expr* expr = buildExpr();
         tokitr++; lexitr++;	//itterate over s_semi
         AssignStmt* assign = new AssignStmt(id, expr);
+        insttable.push_back(assign);
 	}
 	void buildInput();
 	void buildOutput(){
@@ -314,10 +267,12 @@ private:
           	string text = *lexitr;
             tokitr++; lexitr++; //itterate over t_text
         	StrOutStmt* strout = new StrOutStmt(text);
+            insttable.push_back(strout);
         }
         else{
          	Expr* expr = buildExpr();
          	ExprOutStmt* strout = new ExprOutStmt(expr);
+            insttable.push_back(strout);
         }
         tokitr++; lexitr++; //itterate over s_rparen
 	}
@@ -339,8 +294,19 @@ public:
 
 	// The compile method is responsible for getting the instruction
 	// table built.  It will call the appropriate build methods.
-	bool compile();
-        //Patrick
+	bool compile(){
+          tokitr++; lexitr++; //itterate over t_main
+          tokitr++; lexitr++; //itterate over s_lbrace
+          buildStmt();
+          tokitr++; lexitr++; //itterate over s_rbrace
+          if(tokitr != tokens.end()){
+              cerr<< "Error: " << *tokitr <<  " " << *lexitr << " is invalid"<<endl;
+              return false;
+          }
+            cout<< "Compile Output Success!"<<endl;
+            return true;
+	}
+
 	// The run method will execute the code in the instruction
 	// table.
 	void run();
