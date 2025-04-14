@@ -17,6 +17,7 @@ bool SyntaxAnalyzer::declarationCheck() {
             if (*tempTokitr == "t_integer" || *tempTokitr == "t_string" || declaredVars.contains(varName)){
                 if (!declaredVars.contains(varName)) {
                     declaredVars.insert(varName);
+                    symboltable.insert({lexemes[i], tokens[i]});
                     tokitr++; lexitr++;
                 }
                 else if (*tempTokitr == "t_integer" || *tempTokitr == "t_string"){
@@ -301,12 +302,11 @@ SyntaxAnalyzer::SyntaxAnalyzer(istream& infile){
             i++;
         }
 
-        string token = data.substr(0, position -1);
-        string lexeme = data.substr(position + 1, data.length() - position - 1);
+        string token = data.substr(0, position);
+        string lexeme = data.substr(position + 1, data.length() - position);
 
         tokens.insert(tokens.end(), token);
         lexemes.insert(lexemes.end(), lexeme);
-        symboltable.insert({lexeme, token});
     }
     tokitr = tokens.begin();
     lexitr = lexemes.begin();

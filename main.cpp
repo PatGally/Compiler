@@ -1,6 +1,7 @@
 #include <fstream>
 #include <regex>
 
+#include "LexAnalyzer.h"
 #include "SyntaxAnalyzer.h"
 using namespace std;
 
@@ -9,9 +10,5 @@ using namespace std;
 int main() {
     //Patrick
     //Syntax Checker
-    ifstream sourcelexemesInput("../test.txt");
-    SyntaxAnalyzer syntax(sourcelexemesInput);
-    syntax.parse();
-    sourcelexemesInput.close();
     return 0;
 }

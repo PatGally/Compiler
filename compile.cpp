@@ -62,7 +62,12 @@ private:
 	vector<Expr *> exprs;
 	vector<string> ops;  // tokens of operators
 public:
-	~InFixExpr();
+	~InFixExpr(){
+       for(Expr* expr: exprs){
+         delete expr;
+       }
+       exprs.clear();
+	}
 	int eval();
 	string toString();
 };
@@ -83,10 +88,13 @@ private:
 	string var;
 	Expr* p_expr;
 public:
-	AssignStmt(){
-
+	AssignStmt(string id, Expr* expr){
+        var = id;
+        p_expr = expr;
 	}
-	~AssignStmt();
+	~AssignStmt(){
+       delete p_expr;
+	}
 	string toString();
 	void execute();
 };
@@ -105,7 +113,9 @@ class StrOutStmt : public Stmt{
 private:
 	string value;
 public:
-	StrOutStmt();
+	StrOutStmt(string val){
+        value = val;
+    }
 	~StrOutStmt();
 	string toString();
 	void execute();
@@ -116,8 +126,12 @@ class ExprOutStmt : public Stmt{
 private:
 	Expr* p_expr;
 public:
-	ExprOutStmt();
-	~ExprOutStmt();
+	ExprOutStmt(Expr* expr){
+        p_expr = expr;
+    }
+	~ExprOutStmt(){
+          delete p_expr;
+	}
 	string toString();
 	void execute();
 };
@@ -159,15 +173,50 @@ class Compiler{
 private:
 	void buildIf();
 	void buildWhile();
-	void buildStmt();
-        //Patrick
-	void buildAssign();
-        //Patrick
+	void buildStmt(){
+		//Patrick
+        if(*tokitr == "t_if"){
+          buildIf();
+        }
+		else if(*tokitr == "t_while"){
+			buildWhile();
+		}
+		else if(*tokitr == "t_id"){
+			buildAssign();
+		}
+		else if(*tokitr == "t_input"){
+			buildInput();
+		}
+		else if(*tokitr == "t_output"){
+			buildOutput();
+		}
+	}
+	void buildAssign(){
+		//Patrick
+		string id = *lexitr;
+		tokitr++; lexitr++;	//itterates over t_id
+        tokitr++; lexitr++;	//itterate over s_assign
+        Expr* expr = buildExpr();
+        tokitr++; lexitr++;	//itterate over s_semi
+        AssignStmt* assign = new AssignStmt(id, expr);
+	}
 	void buildInput();
-	void buildOutput();
-        //Patrick
-	// use one of the following buildExpr methods
-	void buildExpr(Expr*&);      Expr* buildExpr();
+	void buildOutput(){
+		//Patrick
+		tokitr++; lexitr++; //itterate over s_lparen
+        if(*tokitr == "t_text"){
+          	string text = *lexitr;
+            tokitr++; lexitr++; //itterate over t_text
+        	StrOutStmt* strout = new StrOutStmt(text);
+        }
+        else{
+         	Expr* expr = buildExpr();
+         	ExprOutStmt* strout = new ExprOutStmt(expr);
+        }
+        tokitr++; lexitr++; //itterate over s_rparen
+	}
+	// use one of the following buildExpr methods, when using this method, you are resonsible to add the expression to the instruction table
+	Expr* buildExpr();
 	// headers for populate methods may not change
 	void populateTokenLexemes(istream& infile);
 	void populateSymbolTable(istream& infile);
