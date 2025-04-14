@@ -78,6 +78,28 @@ public:
             } else if (ops[i] == "/") {
                 result /= exprs[i + 1]->eval();
             }
+            else if (ops[i] == "%") {
+            	result = result % exprs[i + 1]->eval();
+            }
+            else if (ops[i] == "<") {
+                result = (result < exprs[i + 1]->eval()) ? 1 : 0;
+            } else if (ops[i] == ">") {
+                result = (result > exprs[i + 1]->eval()) ? 1 : 0;
+            } else if (ops[i] == "<=") {
+                result = (result <= exprs[i + 1]->eval()) ? 1 : 0;
+            } else if (ops[i] == ">=") {
+                result = (result >= exprs[i + 1]->eval()) ? 1 : 0;
+            } else if (ops[i] == "==") {
+                result = (result == exprs[i + 1]->eval()) ? 1 : 0;
+            } else if (ops[i] == "!=") {
+                result = (result != exprs[i + 1]->eval()) ? 1 : 0;
+            }
+            else if (ops[i] == "and") {
+                result = (result && exprs[i + 1]->eval()) ? 1 : 0;
+            }
+            else if (ops[i] == "or") {
+                result = (result || exprs[i + 1]->eval()) ? 1 : 0;
+            }
         }
         return result;
 	}
