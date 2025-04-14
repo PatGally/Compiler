@@ -231,10 +231,24 @@ private:
 	Expr* p_expr;
 	int elsetarget;
 public:
-	WhileStmt();
-	~WhileStmt();
-	string toString();
-	void execute();
+	WhileStmt(){
+		p_expr = nullptr;
+		elsetarget = 0;
+	};
+	~WhileStmt(){
+		delete p_expr;
+	};
+	string toString(){
+		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
+	};
+	void execute(){
+		if (p_expr->eval() == 0) {
+			pc = elsetarget;
+		} else {
+			pc++;
+		}
+	};
+
 };
 
 class GoToStmt : public Stmt{
@@ -300,10 +314,19 @@ private:
         }
         tokitr++; lexitr++; //itterate over s_rparen
 	}
-	// use one of the following buildExpr methods, when using this method, you are resonsible to add the expression to the instruction table
+	// use one of the following buildExpr methods, when using this method, you are responsible to add the expression to the instruction table
 	Expr* buildExpr();
 	// headers for populate methods may not change
-	void populateTokenLexemes(istream& infile);
+	void populateTokenLexemes(istream& infile){
+		string token, lexeme;
+		while (infile >> token >> lexeme) {
+			tokens.push_back(token);
+			lexemes.push_back(lexeme);
+		}
+
+		tokitr = tokens.begin();
+		lexitr = lexemes.begin();
+    };
 	void populateSymbolTable(istream& infile);
         // Emma
 public:
@@ -333,7 +356,12 @@ public:
 
 	// The run method will execute the code in the instruction
 	// table.
-	void run();
+	void run(){
+		pc = 0;
+		while (pc < insttable.size()) {
+			insttable[pc]->execute();
+		}
+    };
 };
 
 // prints vartable, instable, symboltable
