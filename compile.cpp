@@ -18,6 +18,7 @@ vector<string>::iterator tokitr;
 map<string, int> vartable; 	// map of variables and their values
 vector<Stmt *> insttable; 		// table of instructions
 map<string, string> symboltable; // map of variables to datatype (i.e. sum t_integer) variable name : datatype
+map<string, int> precMap; // map of operator precedence
 
 
 // Runtime Global Methods
@@ -78,7 +79,7 @@ private:
 	vector<string> exprs;
 
 	bool isOperator(string term) {
-		if (term == "+" ||term ==  "-" || term == "*" || term == "/" || term == "%") {
+		if (precMap.find(term) != precMap.end()) {
 			return true;
 		}
 		return false;
@@ -139,7 +140,7 @@ class StrPostFixExpr : public Expr{	//Might want to change
 private:
 	vector<string> exprs;
 	bool isOperator(string term) {
-		if (term == "+" ||term ==  "-" || term == "*" || term == "/" || term == "%") {
+		if (precMap.find(term) != precMap.end()) {
 			return true;
 		}
 		return false;
@@ -455,10 +456,10 @@ private:
     }
 	void buildOutput(){
 		//Patrick
-		tokitr++; lexitr++; //itterate over s_lparen
+		tokitr++; lexitr++; //iterate over s_lparen
         if(*tokitr == "t_text"){
           	string text = *lexitr;
-            tokitr++; lexitr++; //itterate over t_text
+            tokitr++; lexitr++; //iterate over t_text
         	StrOutStmt* strout = new StrOutStmt(text);
             insttable.push_back(strout);
         }
@@ -467,7 +468,7 @@ private:
          	ExprOutStmt* strout = new ExprOutStmt(expr);
             insttable.push_back(strout);
         }
-        tokitr++; lexitr++; //itterate over s_rparen
+        tokitr++; lexitr++; //iterate over s_rparen
 	}
 	// use one of the following buildExpr methods, when using this method, you are responsible to add the expression to the instruction table
 	Expr* buildExpr();
