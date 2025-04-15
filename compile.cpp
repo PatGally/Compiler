@@ -375,12 +375,19 @@ class GoToStmt : public Stmt{
 private:
 	int target;
 public:
-	GoToStmt();
-        //Emma
+	GoToStmt(){
+       target = 0;
+     }
 	~GoToStmt();
-	void setTarget();
-	string toString();
-	void execute();
+	void setTarget(int t){
+       target = t;
+    }
+	string toString(){
+       return "GoTo " + to_string(target);
+    }
+	void execute(){
+      pc = target;
+    }
 };
 
 class Compiler{
@@ -403,8 +410,6 @@ private:
        insttable.push_back(ifstmt);
 
     }
-
-        //Emma
 	void buildWhile();
 	void buildStmt(){
 		//Patrick
@@ -471,8 +476,12 @@ private:
 		tokitr = tokens.begin();
 		lexitr = lexemes.begin();
     };
-	void populateSymbolTable(istream& infile);
-        // Emma
+	void populateSymbolTable(istream& infile){
+        if(symboltable.find("t_id") == symboltable.end()){
+          symboltable["t_id"] = "1";
+        }
+     }
+
 public:
 	Compiler(){}
 	// headers may not change
