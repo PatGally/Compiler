@@ -76,42 +76,103 @@ class IntPostFixExpr : public Expr{	//Might want to change
 //Patrick
 private:
 	vector<string> exprs;
+
+	bool isOperator(string term) {
+		if (term == "+" ||term ==  "-" || term == "*" || term == "/" || term == "%") {
+			return true;
+		}
+		return false;
+	}
+	int applyOperator(int a, int b, string oper) {
+		if (oper == "+") {
+			return a + b;
+		}
+		else if (oper == "-") {
+			return a - b;
+		}
+		else if (oper == "*") {
+			return a * b;
+		}
+		else if (oper == "/") {
+			return a / b;
+		}
+	}
 public:
+	IntPostFixExpr(vector<string> exp) {
+		for (int i = 0; i < exp.size(); ++i) {
+            exprs.push_back(exp[i]);
+        }
+	}
 	~IntPostFixExpr(){
         for (size_t i = 0; i < exprs.size(); ++i) {
             delete exprs[i];
         }
     }
-	int eval(){
+	int eval() {
+		vector<int> tempNumHolder;
+		int result = 0;
+		for (const string& token : exprs) {
+			if (isdigit(token[0])) {
+				tempNumHolder.push_back(stoi(token));
+			}
+			else if (isOperator(token)) {
+				int b = tempNumHolder.back();
+				tempNumHolder.pop_back();
+				int a = tempNumHolder.back();
+				tempNumHolder.pop_back();
+				result = applyOperator(a, b, token);
+				tempNumHolder.push_back(result);
+			}
+		}
+		return result;
 	}
 	string toString(){
         string result = "";
-        for (size_t i = 0; i < exprs.size(); ++i) {
-            result += exprs[i]->toString();
-            if (i < ops.size()) {
-                result += " " + ops[i] + " ";
-            }
+		for (int i = 0; i < exprs.size(); ++i) {
+            result += exprs[i];
         }
-        return result;
+		return result;
     }
 };
 class StrPostFixExpr : public Expr{	//Might want to change
 //Patrick
 private:
 	vector<string> exprs;
+	bool isOperator(string term) {
+		if (term == "+" ||term ==  "-" || term == "*" || term == "/" || term == "%") {
+			return true;
+		}
+		return false;
+	}
 public:
+	StrPostFixExpr(vector<string> exp) {
+        for (int i = 0; i < exp.size(); ++i) {
+            exprs.push_back(exp[i]);
+        }
+    }
 	~StrPostFixExpr(){
         for (size_t i = 0; i < exprs.size(); ++i) {
             delete exprs[i];
         }
     }
 	string eval() {
-
-		return NULL;
+		string result = "";
+		for (const string& token : exprs) {
+			if (isOperator(token)) {
+				result += token;
+			}
+			else {
+				result += token;
+			}
+		}
+		return result;
 	}
 
 	string toString(){
 		string result = "";
+		for (int i = 0; i < exprs.size(); ++i) {
+            result += exprs[i];
+        }
 		return result;
     }
 
