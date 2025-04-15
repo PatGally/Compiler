@@ -48,7 +48,7 @@ public:
       return value;
     }
 	string toString(){
-      return toString();
+      return toString(); // should this be to_string(value) b/c this is infinite recursion
     }
 };
 class StringConstExpr : public Expr{	//Does constant expressions, do we need a destructor?
@@ -244,6 +244,9 @@ public:
 	void setVar(const string& v){
        var = v;
     }
+    string getVar(){
+      return var;
+    }
 	string toString(){
        return "Input" + var;
     }
@@ -330,6 +333,7 @@ public:
     void setExpr(Expr* expr){
       p_expr = expr;
     }
+
     void setTarget(int t){
       elsetarget = t;
     }
@@ -386,7 +390,7 @@ public:
 	GoToStmt(){
        target = 0;
      }
-	~GoToStmt();
+	~GoToStmt(){}
 	void setTarget(int t){
        target = t;
     }
@@ -483,8 +487,15 @@ private:
 		lexitr = lexemes.begin();
     };
 	void populateSymbolTable(istream& infile){
-        if(symboltable.find("t_id") == symboltable.end()){
-          symboltable["t_id"] = "1";
+        for(Stmt* stmt : insttable){
+          if( auto input = dynamic_cast<InputStmt*>(stmt) ) {
+            string var = input->getVar();
+            if(symboltable.count(var) == 0){
+              symboltable[var] = " ";
+            }
+          } else if (auto ifstmt = dynamic_cast<IfStmt*>(stmt)) {
+
+          }
         }
      }
 
