@@ -37,21 +37,31 @@ public:
 	virtual ~Expr(){}	//Destroys object correctly
 };
 
-class ConstExpr : public Expr{	//Does constant expressions, do we need a destructor?
+class ConstExpr : public Expr{	//Does constant expressions, do we need a destructor? Make int constExpr and string ConstExpr
 private:
 	int value;
 public:
-	ConstExpr(int val);
-	int eval();
-	string toString();
+	ConstExpr(int val){
+       value = val;
+    }
+	int eval(){
+      return value;
+    }
+	string toString(){
+      return toString();
+    }
 };
 
 class IdExpr : public Expr{	//Id expression, you have a variable, need to look for value in variable table
 private:
 	string id;
 public: // Emma
-	IdExpr(string s);
-	int eval();
+	IdExpr(string s){
+       id = s;
+    }
+	int eval(){
+       return 0;
+    }
 	string toString();
 };
 
@@ -175,9 +185,19 @@ private:
 public:
 	InputStmt();
 	~InputStmt();
-	void setVar(const string& v);
-	string toString();
-	void execute();
+	void setVar(const string& v){
+       var = v;
+    }
+	string toString(){
+       return "Input" + var;
+    }
+	void execute(){
+       cout << "Enter value for: " << var << endl;
+       int val;
+       cin >> val;
+       vartable[var] = val;
+       ++pc;
+    }
 };
 
 class StrOutStmt : public Stmt {
@@ -218,12 +238,24 @@ private:
 	Expr* p_expr;
 	int elsetarget;
 public:
-	IfStmt();
-	~IfStmt();
-	string toString();
-	void execute();
-    void setExpr(Expr* expr);
-    void setTarget(int t);
+	IfStmt(){}
+	~IfStmt(){}
+	string toString(){
+       return "If " + p_expr->toString() + " goto ";
+     }
+	void execute(){
+      if(p_expr->eval() == 0){
+        pc = elsetarget;
+      } else {
+        ++pc;
+      }
+    }
+    void setExpr(Expr* expr){
+      p_expr = expr;
+    }
+    void setTarget(int t){
+      elsetarget = t;
+    }
 };
 
 class WhileStmt : public Stmt{
@@ -231,10 +263,24 @@ private:
 	Expr* p_expr;
 	int elsetarget;
 public:
-	WhileStmt();
-	~WhileStmt();
-	string toString();
-	void execute();
+	WhileStmt(){
+		p_expr = nullptr;
+		elsetarget = 0;
+	};
+	~WhileStmt(){
+		delete p_expr;
+	};
+	string toString(){
+		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
+	};
+	void execute(){
+		if (p_expr->eval() == 0) {
+			pc = elsetarget;
+		} else {
+			pc++;
+		}
+	};
+
 };
 
 class GoToStmt : public Stmt{
@@ -252,7 +298,25 @@ public:
 
 class Compiler{
 private:
-	void buildIf();
+	void buildIf(){
+       ++tokitr;
+       ++lexitr;
+       Expr* condition = nullptr;
+       buildExpr();
+       if(*tokitr == "t_jump"){
+         cerr << "Incorrect Syntax" << endl;
+         exit(-1);
+       }
+       ++tokitr;
+       int line = stoi(*tokitr);
+       ++lexitr;
+       IfStmt* ifstmt = new IfStmt();
+       ifstmt -> setExpr(condition);
+       ifstmt -> setTarget(line);
+       insttable.push_back(ifstmt);
+
+    }
+
         //Emma
 	void buildWhile();
 	void buildStmt(){
@@ -283,7 +347,14 @@ private:
         AssignStmt* assign = new AssignStmt(id, expr);
         insttable.push_back(assign);
 	}
-	void buildInput();
+	void buildInput(){
+      ++tokitr;
+      string var = *lexitr;
+      ++lexitr;
+      InputStmt* input = new InputStmt();
+      input->setVar(var);
+      insttable.push_back(input);
+    }
 	void buildOutput(){
 		//Patrick
 		tokitr++; lexitr++; //itterate over s_lparen
@@ -300,10 +371,19 @@ private:
         }
         tokitr++; lexitr++; //itterate over s_rparen
 	}
-	// use one of the following buildExpr methods, when using this method, you are resonsible to add the expression to the instruction table
+	// use one of the following buildExpr methods, when using this method, you are responsible to add the expression to the instruction table
 	Expr* buildExpr();
 	// headers for populate methods may not change
-	void populateTokenLexemes(istream& infile);
+	void populateTokenLexemes(istream& infile){
+		string token, lexeme;
+		while (infile >> token >> lexeme) {
+			tokens.push_back(token);
+			lexemes.push_back(lexeme);
+		}
+
+		tokitr = tokens.begin();
+		lexitr = lexemes.begin();
+    };
 	void populateSymbolTable(istream& infile);
         // Emma
 public:
@@ -333,7 +413,12 @@ public:
 
 	// The run method will execute the code in the instruction
 	// table.
-	void run();
+	void run(){
+		pc = 0;
+		while (pc < insttable.size()) {
+			insttable[pc]->execute();
+		}
+    };
 };
 
 // prints vartable, instable, symboltable
@@ -351,89 +436,9 @@ int main(){
 
 	return 0;
 }
-void Compiler::buildIf(){
-  tokitr++;
-  ++lexitr;
-  Expr* condition = nullptr;
-  buildExpr(condition);
-  if(*tokitr == "t_jump"){
-    cerr<<"Incorrect Syntax"<<endl;
-    exit(-1);
-  }
-  ++tokitr;
-  int line = stoi(*lexitr);
-  ++lexitr;
-
-  IfStmt* ifstmt = new IfStmt();
-  ifstmt-> setExpr(condition);
-  ifstmt-> setTarget(line);
-  insttable.push_back(ifstmt);
-}
-void Compiler::buildInput(){
-  ++tokitr;
-  string var = *lexitr;
-  ++lexitr;
-
-  InputStmt* input = new InputStmt();
-  input-> setVar(var);
-  insttable.push_back(input);
-}
-InputStmt :: InputStmt(){}
-InputStmt :: ~InputStmt(){}
 
 
-void InputStmt::setVar(const string& v){
-  var = v;
-}
-string InputStmt::toString(){
-  return "Input" + var;
-}
-void InputStmt::execute(){
-  cout << "Enter Value For: " << var << endl;
-  int val;
-  cin >> val;
-  vartable[var] = val;
-  ++pc;
-}
 
 
-ConstExpr::ConstExpr(int val){
-  value = val;
-}
-int ConstExpr::eval(){
-  return value;
-}
-string ConstExpr::toString(){
-  return to_string(value);
-}
-IdExpr::IdExpr(string s){
-  id = s;
-}
-IfStmt::IfStmt() {}
-IfStmt::~IfStmt() {}
 
-void IfStmt::setExpr(Expr* e) {
-	p_expr = e;
-}
-void IfStmt::setTarget(int line) {
-	elsetarget = line;
-}
-string IfStmt::toString() {
-	return "If condition -> " + p_expr->toString() + " goto " + to_string(elsetarget);
-}
-void IfStmt::execute() {
-	if (p_expr->eval() == 0) {
-		pc = elsetarget;
-	} else {
-		++pc;
-	}
-}
-int IdExpr::eval(){
-  if(vartable.find(id) != vartable.end()){
-    return vartable[id];
-  } else {
-    cerr<<"Error: Variable not initialized"<<endl;
-    exit(-1);
-  }
 
-}
