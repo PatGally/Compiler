@@ -379,6 +379,7 @@ private:
 	// use one of the following buildExpr methods, when using this method, you are responsible to add the expression to the instruction table
 	Expr* buildExpr();
 	//converts to postfix
+	//build the precmap (look at 4_8)
 	//Aksel
 
 	// headers for populate methods may not change
@@ -444,9 +445,3 @@ int main(){
 
 	return 0;
 }
-
-
-
-
-
-
