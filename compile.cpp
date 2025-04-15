@@ -72,49 +72,17 @@ public: // Emma
 	string toString();
 };
 
-class IntInFixExpr : public Expr{	//Might want to change
+class IntPostFixExpr : public Expr{	//Might want to change
 //Patrick
 private:
-	vector<Expr *> exprs;
-	vector<string> ops;  // tokens of operators
+	vector<string> exprs;
 public:
-	~IntInFixExpr(){
+	~IntPostFixExpr(){
         for (size_t i = 0; i < exprs.size(); ++i) {
             delete exprs[i];
         }
     }
 	int eval(){
-	int result = dynamic_cast<IntegerConstExpr*>(exprs[0])->eval();
-	for (size_t i = 0; i < ops.size(); ++i) {
-		if (ops[i] == "+") {
-			result += dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "-") {
-			result -= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "*") {
-			result *= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "/") {
-			result /= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "%") {
-			result = result % dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "<") {
-			result = (result < dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == ">") {
-			result = (result > dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "<=") {
-			result = (result <= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == ">=") {
-			result = (result >= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "==") {
-			result = (result == dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "!=") {
-			result = (result != dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "and") {
-			result = (result && dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "or") {
-			result = (result || dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		}
-	}
-		return result;
 	}
 	string toString(){
         string result = "";
@@ -127,42 +95,23 @@ public:
         return result;
     }
 };
-class StrInFixExpr : public Expr{	//Might want to change
+class StrPostFixExpr : public Expr{	//Might want to change
 //Patrick
 private:
-	vector<Expr *> exprs;
-	vector<string> ops;  // tokens of operators
+	vector<string> exprs;
 public:
-	~StrInFixExpr(){
+	~StrPostFixExpr(){
         for (size_t i = 0; i < exprs.size(); ++i) {
             delete exprs[i];
         }
     }
 	string eval() {
-		string result = "";
-		for (size_t i = 0; i < exprs.size(); ++i) {
-			StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(exprs[i]);
-			if (strExpr != nullptr) {
-				result += strExpr->eval();
-			} else {
-				cerr << "Type Error: Expression is not a StringConstExpr" << endl;
-				exit(-1);
-			}
-			if (i < ops.size()) {
-				result += ops[i];
-			}
-		}
-		return result;
+
+		return NULL;
 	}
 
 	string toString(){
 		string result = "";
-		for (size_t i = 0; i < exprs.size(); ++i) {
-			result += exprs[i]->toString();
-			if (i < ops.size()) {
-				result += " " + ops[i] + " ";
-			}
-		}
 		return result;
     }
 
@@ -272,17 +221,13 @@ public:
         return "Output " + p_expr->toString();
     }
 	void execute(){
-		IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
-		if (intExpr) {
-			cout << intExpr->eval() << endl;
+		if (dynamic_cast<IntegerConstExpr*>(p_expr)) {
+			cout << dynamic_cast<IntegerConstExpr*>(p_expr)->eval() << endl;
 		} else {
-			StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
-			if (strExpr) {
-				cout << strExpr->eval() << endl;
-			}
+			cout << dynamic_cast<StringConstExpr*>(p_expr)->eval() << endl;
 		}
 		pc++;
-    }
+	}
 };
 
 class IfStmt : public Stmt{
