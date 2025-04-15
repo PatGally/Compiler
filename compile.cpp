@@ -38,6 +38,8 @@ public:
 };
 
 class ConstExpr : public Expr{	//Does constant expressions, do we need a destructor? Make int constExpr and string ConstExpr
+	//create intConstExpr & stringConstExpr
+	//Aksel
 private:
 	int value;
 public:
@@ -201,13 +203,14 @@ public:
 };
 
 class StrOutStmt : public Stmt {
+	//Aksel
 	private:
 		string value;
 	public:
-		StrOutStmt(const string& val) { // Use const reference to avoid unnecessary copying
+		StrOutStmt(const string& val) {
 			value = val;
 		}
-		~StrOutStmt() {} // Define the destructor
+		~StrOutStmt() {}
 		string toString();
 		void execute();
 };
@@ -316,9 +319,11 @@ private:
        insttable.push_back(ifstmt);
 
     }
-
         //Emma
+
 	void buildWhile();
+	//Aksel
+
 	void buildStmt(){
 		//Patrick
         if(*tokitr == "t_if"){
@@ -373,6 +378,9 @@ private:
 	}
 	// use one of the following buildExpr methods, when using this method, you are responsible to add the expression to the instruction table
 	Expr* buildExpr();
+	//converts to postfix
+	//Aksel
+
 	// headers for populate methods may not change
 	void populateTokenLexemes(istream& infile){
 		string token, lexeme;
