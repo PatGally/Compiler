@@ -202,7 +202,8 @@ public:
 			// Determine the type of the evaluated expression
 			if (p_expr->toString().find_first_not_of("0123456789") == string::npos) {
 				exprType = "t_integer"; // All characters are digits
-			} else {
+			}
+			else {
 				exprType = "t_string"; // Contains non-digit characters
 			}
 
@@ -212,8 +213,9 @@ public:
 				exit(-1);
 			}
 
-			vartable[var] = p_expr->eval();
-		} else {
+			vartable[var] = dynamic_cast<IntegerConstExpr*>(p_expr)->eval();
+		}
+		else {
 			cerr << "Error: Variable not initialized" << endl;
 			exit(-1);
 		}
@@ -270,8 +272,16 @@ public:
         return "Output " + p_expr->toString();
     }
 	void execute(){
-        cout << p_expr->eval() << endl;
-        ++pc;
+		IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+		if (intExpr) {
+			cout << intExpr->eval() << endl;
+		} else {
+			StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+			if (strExpr) {
+				cout << strExpr->eval() << endl;
+			}
+		}
+		pc++;
     }
 };
 
