@@ -241,13 +241,30 @@ public:
 	string toString(){
        return "If " + p_expr->toString() + " goto ";
      }
-	void execute(){
-      if(p_expr->eval() == 0){
-        pc = elsetarget;
-      } else {
-        ++pc;
-      }
+	void execute() {
+    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+    if (intExpr) {
+        int val = intExpr->eval();
+        if (val == 0) {
+            pc = elsetarget;
+        } else {
+            ++pc;
+        }
+    } else {
+        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+        if (strExpr) {
+            string val = strExpr->eval();
+            if (val == "") {
+                pc = elsetarget;
+            } else {
+                ++pc;
+            }
+        } else {
+            ++pc;
+        }
     }
+}
+
     void setExpr(Expr* expr){
       p_expr = expr;
     }
@@ -271,13 +288,30 @@ public:
 	string toString(){
 		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
 	};
-	void execute(){
-		if (p_expr->eval() == 0) {
-			pc = elsetarget;
-		} else {
-			pc++;
-		}
-	};
+	void execute() {
+    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+    if (intExpr) {
+        int val = intExpr->eval();
+        if (val == 0) {
+            pc = elsetarget;
+        } else {
+            ++pc;
+        }
+    } else {
+        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+        if (strExpr) {
+            string val = strExpr->eval();
+            if (val == "") {
+                pc = elsetarget;
+            } else {
+                ++pc;
+            }
+        } else {
+            // default behavior if neither int nor string
+            ++pc;
+            }
+        }
+	}
 
 };
 
@@ -286,12 +320,19 @@ class GoToStmt : public Stmt{
 private:
 	int target;
 public:
-	GoToStmt();
-        //Emma
+	GoToStmt(){
+       target = 0;
+     }
 	~GoToStmt();
-	void setTarget();
-	string toString();
-	void execute();
+	void setTarget(int t){
+       target = t;
+    }
+	string toString(){
+       return "GoTo " + to_string(target);
+    }
+	void execute(){
+      pc = target;
+    }
 };
 
 class Compiler{
@@ -314,8 +355,6 @@ private:
        insttable.push_back(ifstmt);
 
     }
-
-        //Emma
 	void buildWhile();
 	void buildStmt(){
 		//Patrick
@@ -382,8 +421,12 @@ private:
 		tokitr = tokens.begin();
 		lexitr = lexemes.begin();
     };
-	void populateSymbolTable(istream& infile);
-        // Emma
+	void populateSymbolTable(istream& infile){
+        if(symboltable.find("t_id") == symboltable.end()){
+          symboltable["t_id"] = "1";
+        }
+     }
+
 public:
 	Compiler(){}
 	// headers may not change
