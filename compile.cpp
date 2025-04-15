@@ -351,14 +351,15 @@ public:
 		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
 	};
 	void execute() {
-    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
-    if (intExpr) {
-        int val = intExpr->eval();
-        if (val == 0) {
-            pc = elsetarget;
-        } else {
-            ++pc;
-        }
+	    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+	    if (intExpr) {
+	        int val = intExpr->eval();
+	        if (val == 0) {
+	            pc = elsetarget;
+	        } else
+	        	{
+					++pc;
+				}
     } else {
         StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
         if (strExpr) {
@@ -420,20 +421,18 @@ private:
 	void buildWhile();
 	void buildStmt(){
 		//Patrick
-        if(*tokitr == "t_if"){
-          buildIf();
-        }
-		else if(*tokitr == "t_while"){
-			buildWhile();
-		}
-		else if(*tokitr == "t_id"){
-			buildAssign();
-		}
-		else if(*tokitr == "t_input"){
-			buildInput();
-		}
-		else if(*tokitr == "t_output"){
-			buildOutput();
+		while (tokitr != tokens.end() && *tokitr != "s_rbrace") {
+			if (*tokitr == "t_if") {
+				buildIf();
+			} else if (*tokitr == "t_while") {
+				buildWhile();
+			} else if (*tokitr == "t_id") {
+				buildAssign();
+			} else if (*tokitr == "t_input") {
+				buildInput();
+			} else if (*tokitr == "t_output") {
+				buildOutput();
+			}
 		}
 	}
 	void buildAssign(){
@@ -494,6 +493,19 @@ public:
 	// headers may not change
 	Compiler(istream& source, istream& symbols){
 		// build precMap - include logical, relational, arithmetic operators
+		precMap["or"] = 5;
+		precMap["and"] = 4;
+		precMap["<"] = 3;
+		precMap[">"] = 3;
+		precMap["<="] = 3;
+		precMap[">="] = 3;
+		precMap["!="] = 3;
+		precMap["=="] = 3;
+		precMap["+"] = 2;
+		precMap["-"] = 2;
+		precMap["*"] = 1;
+		precMap["/"] = 1;
+		precMap["%"] = 1;
 
 		populateTokenLexemes(source);	//Copy over lexemes data file readin code
 		populateSymbolTable(symbols);	//Reading in the symbol table output file in variable name, data type : lexeme, token
@@ -502,16 +514,16 @@ public:
 	// The compile method is responsible for getting the instruction
 	// table built.  It will call the appropriate build methods.
 	bool compile(){
-          tokitr++; lexitr++; //itterate over t_main
-          tokitr++; lexitr++; //itterate over s_lbrace
-          buildStmt();
-          tokitr++; lexitr++; //itterate over s_rbrace
-          if(tokitr != tokens.end()){
-              cerr<< "Error: " << *tokitr <<  " " << *lexitr << " is invalid"<<endl;
-              return false;
-          }
-            cout<< "Compile Output Success!"<<endl;
-            return true;
+		tokitr++; lexitr++; //itterate over t_main
+        tokitr++; lexitr++; //itterate over s_lbrace
+        buildStmt();
+        tokitr++; lexitr++; //itterate over s_rbrace
+        if(tokitr != tokens.end()){
+            cerr<< "Error: " << *tokitr <<  " " << *lexitr << " is invalid"<<endl;
+            return false;
+        }
+          cout<< "Compile Output Success!"<<endl;
+          return true;
 	}
 
 	// The run method will execute the code in the instruction
