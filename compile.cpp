@@ -296,13 +296,30 @@ public:
 	string toString(){
        return "If " + p_expr->toString() + " goto ";
      }
-	void execute(){
-      if(p_expr->eval() == 0){
-        pc = elsetarget;
-      } else {
-        ++pc;
-      }
+	void execute() {
+    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+    if (intExpr) {
+        int val = intExpr->eval();
+        if (val == 0) {
+            pc = elsetarget;
+        } else {
+            ++pc;
+        }
+    } else {
+        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+        if (strExpr) {
+            string val = strExpr->eval();
+            if (val == "") {
+                pc = elsetarget;
+            } else {
+                ++pc;
+            }
+        } else {
+            ++pc;
+        }
     }
+}
+
     void setExpr(Expr* expr){
       p_expr = expr;
     }
@@ -326,13 +343,30 @@ public:
 	string toString(){
 		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
 	};
-	void execute(){
-		if (p_expr->eval() == 0) {
-			pc = elsetarget;
-		} else {
-			pc++;
-		}
-	};
+	void execute() {
+    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+    if (intExpr) {
+        int val = intExpr->eval();
+        if (val == 0) {
+            pc = elsetarget;
+        } else {
+            ++pc;
+        }
+    } else {
+        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+        if (strExpr) {
+            string val = strExpr->eval();
+            if (val == "") {
+                pc = elsetarget;
+            } else {
+                ++pc;
+            }
+        } else {
+            // default behavior if neither int nor string
+            ++pc;
+            }
+        }
+	}
 
 };
 
