@@ -306,10 +306,10 @@ class StrOutStmt : public Stmt {
 	private:
 		string value;
 	public:
-		StrOutStmt(const string& val) { // Use const reference to avoid unnecessary copying
+		StrOutStmt(const string& val) {
 			value = val;
 		}
-		~StrOutStmt() {} // Define the destructor
+		~StrOutStmt() {}
 		string toString();
 		void execute();
 };
