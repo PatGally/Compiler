@@ -18,6 +18,7 @@ vector<string>::iterator tokitr;
 map<string, int> vartable; 	// map of variables and their values
 vector<Stmt *> insttable; 		// table of instructions
 map<string, string> symboltable; // map of variables to datatype (i.e. sum t_integer) variable name : datatype
+map<string, int> precMap; // map of operator precedence
 
 
 // Runtime Global Methods
@@ -47,7 +48,7 @@ public:
       return value;
     }
 	string toString(){
-      return toString();
+      return toString(); // should this be to_string(value) b/c this is infinite recursion
     }
 };
 class StringConstExpr : public Expr{	//Does constant expressions, do we need a destructor?
@@ -72,84 +73,97 @@ public: // Emma
 	string toString();
 };
 
-class IntInFixExpr : public Expr{	//Might want to change
+class IntPostFixExpr : public Expr{	//Might want to change
 //Patrick
 private:
-	vector<Expr *> exprs;
-	vector<string> ops;  // tokens of operators
+	vector<string> exprs;
+
+	bool isOperator(string term) {
+		if (precMap.find(term) != precMap.end()) {
+			return true;
+		}
+		return false;
+	}
+	int applyOperator(int a, int b, string oper) {
+		if (oper == "+") {
+			return a + b;
+		}
+		else if (oper == "-") {
+			return a - b;
+		}
+		else if (oper == "*") {
+			return a * b;
+		}
+		else if (oper == "/") {
+			return a / b;
+		}
+	}
 public:
-	~IntInFixExpr(){
+	IntPostFixExpr(vector<string> exp) {
+		for (int i = 0; i < exp.size(); ++i) {
+            exprs.push_back(exp[i]);
+        }
+	}
+	~IntPostFixExpr(){
         for (size_t i = 0; i < exprs.size(); ++i) {
             delete exprs[i];
         }
     }
-	int eval(){
-	int result = dynamic_cast<IntegerConstExpr*>(exprs[0])->eval();
-	for (size_t i = 0; i < ops.size(); ++i) {
-		if (ops[i] == "+") {
-			result += dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "-") {
-			result -= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "*") {
-			result *= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "/") {
-			result /= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "%") {
-			result = result % dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval();
-		} else if (ops[i] == "<") {
-			result = (result < dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == ">") {
-			result = (result > dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "<=") {
-			result = (result <= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == ">=") {
-			result = (result >= dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "==") {
-			result = (result == dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "!=") {
-			result = (result != dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "and") {
-			result = (result && dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
-		} else if (ops[i] == "or") {
-			result = (result || dynamic_cast<IntegerConstExpr*>(exprs[i + 1])->eval()) ? 1 : 0;
+	int eval() {
+		vector<int> tempNumHolder;
+		int result = 0;
+		for (const string& token : exprs) {
+			if (isdigit(token[0])) {
+				tempNumHolder.push_back(stoi(token));
+			}
+			else if (isOperator(token)) {
+				int b = tempNumHolder.back();
+				tempNumHolder.pop_back();
+				int a = tempNumHolder.back();
+				tempNumHolder.pop_back();
+				result = applyOperator(a, b, token);
+				tempNumHolder.push_back(result);
+			}
 		}
-	}
 		return result;
 	}
 	string toString(){
         string result = "";
-        for (size_t i = 0; i < exprs.size(); ++i) {
-            result += exprs[i]->toString();
-            if (i < ops.size()) {
-                result += " " + ops[i] + " ";
-            }
+		for (int i = 0; i < exprs.size(); ++i) {
+            result += exprs[i];
         }
-        return result;
+		return result;
     }
 };
-class StrInFixExpr : public Expr{	//Might want to change
+class StrPostFixExpr : public Expr{	//Might want to change
 //Patrick
 private:
-	vector<Expr *> exprs;
-	vector<string> ops;  // tokens of operators
+	vector<string> exprs;
+	bool isOperator(string term) {
+		if (precMap.find(term) != precMap.end()) {
+			return true;
+		}
+		return false;
+	}
 public:
-	~StrInFixExpr(){
+	StrPostFixExpr(vector<string> exp) {
+        for (int i = 0; i < exp.size(); ++i) {
+            exprs.push_back(exp[i]);
+        }
+    }
+	~StrPostFixExpr(){
         for (size_t i = 0; i < exprs.size(); ++i) {
             delete exprs[i];
         }
     }
 	string eval() {
 		string result = "";
-		for (size_t i = 0; i < exprs.size(); ++i) {
-			StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(exprs[i]);
-			if (strExpr != nullptr) {
-				result += strExpr->eval();
-			} else {
-				cerr << "Type Error: Expression is not a StringConstExpr" << endl;
-				exit(-1);
+		for (const string& token : exprs) {
+			if (isOperator(token)) {
+				result += token;
 			}
-			if (i < ops.size()) {
-				result += ops[i];
+			else {
+				result += token;
 			}
 		}
 		return result;
@@ -157,12 +171,9 @@ public:
 
 	string toString(){
 		string result = "";
-		for (size_t i = 0; i < exprs.size(); ++i) {
-			result += exprs[i]->toString();
-			if (i < ops.size()) {
-				result += " " + ops[i] + " ";
-			}
-		}
+		for (int i = 0; i < exprs.size(); ++i) {
+            result += exprs[i];
+        }
 		return result;
     }
 
@@ -233,6 +244,9 @@ public:
 	void setVar(const string& v){
        var = v;
     }
+    string getVar(){
+      return var;
+    }
 	string toString(){
        return "Input" + var;
     }
@@ -272,17 +286,13 @@ public:
         return "Output " + p_expr->toString();
     }
 	void execute(){
-		IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
-		if (intExpr) {
-			cout << intExpr->eval() << endl;
+		if (dynamic_cast<IntegerConstExpr*>(p_expr)) {
+			cout << dynamic_cast<IntegerConstExpr*>(p_expr)->eval() << endl;
 		} else {
-			StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
-			if (strExpr) {
-				cout << strExpr->eval() << endl;
-			}
+			cout << dynamic_cast<StringConstExpr*>(p_expr)->eval() << endl;
 		}
 		pc++;
-    }
+	}
 };
 
 class IfStmt : public Stmt{
@@ -296,16 +306,34 @@ public:
 	string toString(){
        return "If " + p_expr->toString() + " goto ";
      }
-	void execute(){
-      if(p_expr->eval() == 0){
-        pc = elsetarget;
-      } else {
-        ++pc;
-      }
+	void execute() {
+    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+    if (intExpr) {
+        int val = intExpr->eval();
+        if (val == 0) {
+            pc = elsetarget;
+        } else {
+            ++pc;
+        }
+    } else {
+        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+        if (strExpr) {
+            string val = strExpr->eval();
+            if (val == "") {
+                pc = elsetarget;
+            } else {
+                ++pc;
+            }
+        } else {
+            ++pc;
+        }
     }
+}
+
     void setExpr(Expr* expr){
       p_expr = expr;
     }
+
     void setTarget(int t){
       elsetarget = t;
     }
@@ -326,13 +354,31 @@ public:
 	string toString(){
 		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
 	};
-	void execute(){
-		if (p_expr->eval() == 0) {
-			pc = elsetarget;
-		} else {
-			pc++;
-		}
-	};
+	void execute() {
+	    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+	    if (intExpr) {
+	        int val = intExpr->eval();
+	        if (val == 0) {
+	            pc = elsetarget;
+	        } else
+	        	{
+					++pc;
+				}
+    } else {
+        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+        if (strExpr) {
+            string val = strExpr->eval();
+            if (val == "") {
+                pc = elsetarget;
+            } else {
+                ++pc;
+            }
+        } else {
+            // default behavior if neither int nor string
+            ++pc;
+            }
+        }
+	}
 
 };
 
@@ -341,12 +387,19 @@ class GoToStmt : public Stmt{
 private:
 	int target;
 public:
-	GoToStmt();
-        //Emma
-	~GoToStmt();
-	void setTarget();
-	string toString();
-	void execute();
+	GoToStmt(){
+       target = 0;
+     }
+	~GoToStmt(){}
+	void setTarget(int t){
+       target = t;
+    }
+	string toString(){
+       return "GoTo " + to_string(target);
+    }
+	void execute(){
+      pc = target;
+    }
 };
 
 class Compiler{
@@ -369,25 +422,21 @@ private:
        insttable.push_back(ifstmt);
 
     }
-
-        //Emma
 	void buildWhile();
 	void buildStmt(){
 		//Patrick
-        if(*tokitr == "t_if"){
-          buildIf();
-        }
-		else if(*tokitr == "t_while"){
-			buildWhile();
-		}
-		else if(*tokitr == "t_id"){
-			buildAssign();
-		}
-		else if(*tokitr == "t_input"){
-			buildInput();
-		}
-		else if(*tokitr == "t_output"){
-			buildOutput();
+		while (tokitr != tokens.end() && *tokitr != "s_rbrace") {
+			if (*tokitr == "t_if") {
+				buildIf();
+			} else if (*tokitr == "t_while") {
+				buildWhile();
+			} else if (*tokitr == "t_id") {
+				buildAssign();
+			} else if (*tokitr == "t_input") {
+				buildInput();
+			} else if (*tokitr == "t_output") {
+				buildOutput();
+			}
 		}
 	}
 	void buildAssign(){
@@ -410,10 +459,10 @@ private:
     }
 	void buildOutput(){
 		//Patrick
-		tokitr++; lexitr++; //itterate over s_lparen
+		tokitr++; lexitr++; //iterate over s_lparen
         if(*tokitr == "t_text"){
           	string text = *lexitr;
-            tokitr++; lexitr++; //itterate over t_text
+            tokitr++; lexitr++; //iterate over t_text
         	StrOutStmt* strout = new StrOutStmt(text);
             insttable.push_back(strout);
         }
@@ -422,7 +471,7 @@ private:
          	ExprOutStmt* strout = new ExprOutStmt(expr);
             insttable.push_back(strout);
         }
-        tokitr++; lexitr++; //itterate over s_rparen
+        tokitr++; lexitr++; //iterate over s_rparen
 	}
 	// use one of the following buildExpr methods, when using this method, you are responsible to add the expression to the instruction table
 	Expr* buildExpr();
@@ -437,13 +486,37 @@ private:
 		tokitr = tokens.begin();
 		lexitr = lexemes.begin();
     };
-	void populateSymbolTable(istream& infile);
-        // Emma
+	void populateSymbolTable(istream& infile){
+        for(Stmt* stmt : insttable){
+          if( auto input = dynamic_cast<InputStmt*>(stmt) ) {
+            string var = input->getVar();
+            if(symboltable.count(var) == 0){
+              symboltable[var] = " ";
+            }
+          } else if (auto ifstmt = dynamic_cast<IfStmt*>(stmt)) {
+
+          }
+        }
+     }
+
 public:
 	Compiler(){}
 	// headers may not change
 	Compiler(istream& source, istream& symbols){
 		// build precMap - include logical, relational, arithmetic operators
+		precMap["or"] = 5;
+		precMap["and"] = 4;
+		precMap["<"] = 3;
+		precMap[">"] = 3;
+		precMap["<="] = 3;
+		precMap[">="] = 3;
+		precMap["!="] = 3;
+		precMap["=="] = 3;
+		precMap["+"] = 2;
+		precMap["-"] = 2;
+		precMap["*"] = 1;
+		precMap["/"] = 1;
+		precMap["%"] = 1;
 
 		populateTokenLexemes(source);	//Copy over lexemes data file readin code
 		populateSymbolTable(symbols);	//Reading in the symbol table output file in variable name, data type : lexeme, token
@@ -452,16 +525,16 @@ public:
 	// The compile method is responsible for getting the instruction
 	// table built.  It will call the appropriate build methods.
 	bool compile(){
-          tokitr++; lexitr++; //itterate over t_main
-          tokitr++; lexitr++; //itterate over s_lbrace
-          buildStmt();
-          tokitr++; lexitr++; //itterate over s_rbrace
-          if(tokitr != tokens.end()){
-              cerr<< "Error: " << *tokitr <<  " " << *lexitr << " is invalid"<<endl;
-              return false;
-          }
-            cout<< "Compile Output Success!"<<endl;
-            return true;
+		tokitr++; lexitr++; //itterate over t_main
+        tokitr++; lexitr++; //itterate over s_lbrace
+        buildStmt();
+        tokitr++; lexitr++; //itterate over s_rbrace
+        if(tokitr != tokens.end()){
+            cerr<< "Error: " << *tokitr <<  " " << *lexitr << " is invalid"<<endl;
+            return false;
+        }
+          cout<< "Compile Output Success!"<<endl;
+          return true;
 	}
 
 	// The run method will execute the code in the instruction
