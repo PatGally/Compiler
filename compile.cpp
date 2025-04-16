@@ -435,7 +435,6 @@ public:
                 ++pc;
             }
         } else {
-            // default behavior if neither int nor string
             ++pc;
             }
         }
