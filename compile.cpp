@@ -37,7 +37,7 @@ public:
 	virtual ~Expr(){}	//Destroys object correctly
 };
 
-class IntegerConstExpr : public Expr{	//Does constant expressions, do we need a destructor? Make int constExpr and string ConstExpr
+class IntegerConstExpr : public Expr{
 private:
 	int value;
 public:
@@ -48,16 +48,22 @@ public:
       return value;
     }
 	string toString(){
-      return toString(); // should this be to_string(value) b/c this is infinite recursion
+      return to_string(value);
     }
 };
-class StringConstExpr : public Expr{	//Does constant expressions, do we need a destructor?
+class StringConstExpr : public Expr{
 private:
 	string value;
 public:
-	StringConstExpr(int val);
-	string eval();
-	string toString();
+	StringConstExpr(string val) {
+		value = val;
+	}
+	string eval() {
+		return value;
+	}
+	string toString() {
+		return value;
+	}
 };
 
 class IdExpr : public Expr{	//Id expression, you have a variable, need to look for value in variable table
@@ -310,8 +316,13 @@ class StrOutStmt : public Stmt {
 			value = val;
 		}
 		~StrOutStmt() {}
-		string toString();
-		void execute();
+		string toString() {
+			return "Output" + value;
+		};
+		void execute() {
+			cout << value << endl;
+			++pc;
+		};
 };
 
 class ExprOutStmt : public Stmt{
@@ -390,13 +401,20 @@ public:
 	WhileStmt(){
 		p_expr = nullptr;
 		elsetarget = 0;
-	};
+	}
 	~WhileStmt(){
 		delete p_expr;
-	};
+	}
+	void setExpr(Expr* expr) {
+		p_expr = expr;
+	}
+
+	void setTarget(int target) {
+		elsetarget = target;
+	}
 	string toString(){
 		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
-	};
+	}
 	void execute() {
 	    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
 	    if (intExpr) {
@@ -465,7 +483,31 @@ private:
        insttable.push_back(ifstmt);
 
     }
-	void buildWhile();
+
+	void buildWhile() {
+		++tokitr;
+		++lexitr;
+
+		Expr* condition = buildExpr();
+
+		if (*tokitr != "t_jump") {
+			cerr << "Error: Expected 't_jump' after condition in while loop" << endl;
+			exit(-1);
+		}
+
+		++tokitr;
+		++lexitr;
+
+		int line = stoi(*tokitr);
+		++tokitr;
+		++lexitr;
+
+		WhileStmt* whileStmt = new WhileStmt();
+		whileStmt->setExpr(condition);
+		whileStmt->setTarget(line);
+		insttable.push_back(whileStmt);
+	}
+
 	void buildStmt(){
 		//Patrick
 		while (tokitr != tokens.end() && *tokitr != "s_rbrace") {
@@ -516,8 +558,62 @@ private:
         }
         tokitr++; lexitr++; //iterate over s_rparen
 	}
-	// use one of the following buildExpr methods, when using this method, you are responsible to add the expression to the instruction table
-	Expr* buildExpr();
+
+	Expr* buildExpr() {
+		vector<string> outputQueue;
+		vector<string> opStack;
+		bool isIntExpr = true;
+
+		while (tokitr != tokens.end() && *tokitr != "s_semi" && *tokitr != "s_rparen") {
+			string token = *tokitr;
+			string lexeme = *lexitr;
+
+			if (token == "t_number") {
+				outputQueue.push_back(lexeme);
+			} else if (token == "t_text") {
+				isIntExpr = false;
+				outputQueue.push_back(lexeme);
+			} else if (token == "t_id") {
+				if (symboltable.find(lexeme) != symboltable.end()) {
+					if (symboltable[lexeme] == "t_string") {
+						isIntExpr = false;
+					}
+				}
+				outputQueue.push_back(lexeme);
+			} else if (token == "s_plus" || token == "s_minus" || token == "s_mult" || token == "s_div") {
+				while (!opStack.empty() && precMap[opStack.back()] >= precMap[lexeme]) {
+					outputQueue.push_back(opStack.back());
+					opStack.pop_back();
+				}
+				opStack.push_back(lexeme);
+			} else if (token == "s_lparen") {
+				opStack.push_back(lexeme);
+			} else if (token == "s_rparen") {
+				while (!opStack.empty() && opStack.back() != "(") {
+					outputQueue.push_back(opStack.back());
+					opStack.pop_back();
+				}
+				if (!opStack.empty() && opStack.back() == "(") {
+					opStack.pop_back();
+				}
+			}
+
+			++tokitr;
+			++lexitr;
+		}
+
+		while (!opStack.empty()) {
+			outputQueue.push_back(opStack.back());
+			opStack.pop_back();
+		}
+
+		if (isIntExpr) {
+			return new IntPostFixExpr(outputQueue);
+		} else {
+			return new StrPostFixExpr(outputQueue);
+		}
+	}
+
 	// headers for populate methods may not change
 	void populateTokenLexemes(istream& infile){
 		string token, lexeme;
@@ -605,9 +701,3 @@ int main(){
 
 	return 0;
 }
-
-
-
-
-
-
