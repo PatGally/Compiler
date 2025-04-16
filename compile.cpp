@@ -97,6 +97,31 @@ private:
 		else if (oper == "/") {
 			return a / b;
 		}
+		else if (oper == "and") {
+			return a && b;
+		}
+		else if (oper == "or") {
+			return a || b;
+		}
+		else if (oper == "<") {
+			return a < b;
+		}
+		else if (oper == ">") {
+			return a > b;
+		}
+		else if (oper == "<=") {
+			return a <= b;
+		}
+		else if (oper == ">=") {
+			return a >= b;
+		}
+		else if (oper == "==") {
+			return a == b;
+		}
+		else if (oper == "!=") {
+			return a != b;
+		}
+		return 0;
 	}
 public:
 	IntPostFixExpr(vector<string> exp) {
@@ -158,13 +183,31 @@ public:
     }
 	string eval() {
 		string result = "";
+		vector<string> tempStack;
+
 		for (const string& token : exprs) {
 			if (isOperator(token)) {
-				result += token;
+				if (token == "==" || token == "!=") {
+					string b = tempStack.back();
+					tempStack.pop_back();
+					string a = tempStack.back();
+					tempStack.pop_back();
+
+					if (token == "==") {
+						tempStack.push_back(a == b ? "true" : "false");
+					} else if (token == "!=") {
+						tempStack.push_back(a != b ? "true" : "false");
+					}
+				} else {
+					tempStack.push_back(token);
+				}
+			} else {
+				tempStack.push_back(token);
 			}
-			else {
-				result += token;
-			}
+		}
+
+		if (!tempStack.empty()) {
+			result = tempStack.back();
 		}
 		return result;
 	}
@@ -525,10 +568,10 @@ public:
 	// The compile method is responsible for getting the instruction
 	// table built.  It will call the appropriate build methods.
 	bool compile(){
-		tokitr++; lexitr++; //itterate over t_main
-        tokitr++; lexitr++; //itterate over s_lbrace
+		tokitr++; lexitr++; //iterate over t_main
+        tokitr++; lexitr++; //iterate over s_lbrace
         buildStmt();
-        tokitr++; lexitr++; //itterate over s_rbrace
+        tokitr++; lexitr++; //iterate over s_rbrace
         if(tokitr != tokens.end()){
             cerr<< "Error: " << *tokitr <<  " " << *lexitr << " is invalid"<<endl;
             return false;
