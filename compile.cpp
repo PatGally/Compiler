@@ -230,6 +230,9 @@ public:
                 else if (token == "or") {
                     tempStack.push_back(!a.empty() || !b.empty() ? "" : NULL);
                 }
+				else if (token == "+") {
+					tempStack.push_back(a + b);
+				}
 				else {
 				tempStack.push_back(token);
 				}
@@ -401,7 +404,7 @@ public:
         StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
         if (strExpr) {
             string val = strExpr->eval();
-            if (val == "") {
+            if (!val.empty()) {
                 ++pc;
             } else {
               pc = elsetarget;
