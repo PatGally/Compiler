@@ -341,14 +341,25 @@ class StrOutStmt : public Stmt {
 		StrOutStmt(const string& val) {
 			value = val;
 		}
-		~StrOutStmt() {}
+		~StrOutStmt() {
+
+		}
 		string toString() {
 			return "Output" + value;
-		};
+		}
 		void execute() {
 			cout << value << endl;
 			++pc;
-		};
+		}
+        string getVar(){
+          return value;
+        }
+
+        string getExpr(){
+          return value;
+        }
+
+
 };
 
 class ExprOutStmt : public Stmt{
@@ -413,12 +424,11 @@ public:
         }
     }
 }
-
     void setExpr(Expr* expr){
       p_expr = expr;
     }
-    string getExpr(){
-      return p_expr -> toString();
+    Expr* getExpr(){
+      return p_expr;
     }
 
     void setTarget(int t){
@@ -493,6 +503,7 @@ public:
 	void execute(){
       pc = target;
     }
+
 };
 
 class Compiler{
