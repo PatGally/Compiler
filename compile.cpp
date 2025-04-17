@@ -187,19 +187,35 @@ public:
 
 		for (const string& token : exprs) {
 			if (isOperator(token)) {
-				if (token == "==" || token == "!=") {
-					string b = tempStack.back();
-					tempStack.pop_back();
-					string a = tempStack.back();
-					tempStack.pop_back();
+				string b = tempStack.back();
+				tempStack.pop_back();
+				string a = tempStack.back();
+				tempStack.pop_back();
 
-					if (token == "==") {
-						tempStack.push_back(a == b ? "true" : "false");
-					} else if (token == "!=") {
-						tempStack.push_back(a != b ? "true" : "false");
-					}
-				} else {
-					tempStack.push_back(token);
+				if (token == "==") {
+					tempStack.push_back(a == b ? "" : NULL);
+				} else if (token == "!=") {
+					tempStack.push_back(a != b ? "" : NULL);
+				}
+				else if (token == "<") {
+                    tempStack.push_back(a < b ? "" : NULL);
+                }
+                else if (token == ">") {
+                    tempStack.push_back(a > b ? "" : NULL);
+                }
+                else if (token == "<=") {
+                    tempStack.push_back(a <= b ? "" : NULL);
+                }
+                else if (token == ">=") {
+                    tempStack.push_back(a >= b ? "" : NULL);
+                }
+                else if (token == "and") {
+                	tempStack.push_back((!a.empty() && !b.empty()) ? "" : NULL);}
+                else if (token == "or") {
+                    tempStack.push_back(!a.empty() || !b.empty() ? "" : NULL);
+                }
+				else {
+				tempStack.push_back(token);
 				}
 			} else {
 				tempStack.push_back(token);
