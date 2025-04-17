@@ -491,7 +491,6 @@ private:
 
 		if (*tokitr != "t_jump") {
 			cerr << "Error: Expected 't_jump' after condition in while loop" << endl;
-			exit(-1);
 		}
 
 		++tokitr;
