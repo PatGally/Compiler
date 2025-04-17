@@ -15,7 +15,7 @@ vector<string> lexemes;
 vector<string> tokens;
 vector<string>::iterator lexitr;
 vector<string>::iterator tokitr;
-map<string, int> vartable; 	// map of variables and their values
+map<string, string> vartable; 	// map of variables and their values
 vector<Stmt *> insttable; 		// table of instructions
 map<string, string> symboltable; // map of variables to datatype (i.e. sum t_integer) variable name : datatype
 map<string, int> precMap; // map of operator precedence
@@ -66,14 +66,15 @@ public:
 	}
 };
 
-class IdExpr : public Expr{	//Id expression, you have a variable, need to look for value in variable table
+class StrIdExpr : public Expr{	//Id expression, you have a variable, need to look for value in variable table
 private:
 	string id;
 public: // Emma
-	IdExpr(string s){
+	StrIdExpr(string s){
        id = s;
     }
-	int eval(){
+
+	string eval(){
        if(vartable.find(id) != vartable.end()){
          return vartable[id];
        } else {
@@ -87,6 +88,22 @@ public: // Emma
    string getId(){
      return id;
    }
+};
+class IntIdExpr : public Expr{
+private:
+    int id;
+public:
+  IntIdExpr(int val){
+    id = val;
+  }
+  string eval(){
+
+
+  }
+  int getId(){
+    return id;
+  }
+
 };
 
 class IntPostFixExpr : public Expr{	//Might want to change
@@ -147,7 +164,7 @@ public:
 	}
 	~IntPostFixExpr(){
         for (size_t i = 0; i < exprs.size(); ++i) {
-            delete exprs[i];
+
         }
     }
 	int eval() {
@@ -194,7 +211,7 @@ public:
     }
 	~StrPostFixExpr(){
         for (size_t i = 0; i < exprs.size(); ++i) {
-            delete exprs[i];
+
         }
     }
 	string eval() {
@@ -230,6 +247,9 @@ public:
                 else if (token == "or") {
                     tempStack.push_back(!a.empty() || !b.empty() ? "" : NULL);
                 }
+				else if (token == "+") {
+					tempStack.push_back(a + b);
+				}
 				else {
 				tempStack.push_back(token);
 				}
@@ -281,31 +301,29 @@ public:
         return "Assign " + var + " = " + p_expr->toString();
     }
 	void execute() {
-		if (symboltable.find(var) != symboltable.end()) {
-			string varType = symboltable[var];
-			string exprType;
-
-			// Determine the type of the evaluated expression
-			if (p_expr->toString().find_first_not_of("0123456789") == string::npos) {
-				exprType = "t_integer"; // All characters are digits
-			}
-			else {
-				exprType = "t_string"; // Contains non-digit characters
-			}
-
-			// Check for type mismatch
-			if (varType != exprType) {
-				cerr << "Type Error: Cannot assign " << exprType << " to " << varType << endl;
-				exit(-1);
-			}
-
+		if (dynamic_cast<IntegerConstExpr*>(p_expr)) {
 			vartable[var] = dynamic_cast<IntegerConstExpr*>(p_expr)->eval();
 		}
+		else if (dynamic_cast<StringConstExpr*>(p_expr)) {
+			vartable[var] = dynamic_cast<StringConstExpr*>(p_expr)->eval();
+		}
+		else if (dynamic_cast<IntIdExpr*>(p_expr)) {
+			vartable[var] = dynamic_cast<IntIdExpr*>(p_expr)->getId();
+		}
+		else if (dynamic_cast<StrIdExpr*>(p_expr)) {
+			vartable[var] = vartable[dynamic_cast<StrIdExpr*>(p_expr)->getId()];
+		}
+		else if (dynamic_cast<IntPostFixExpr*>(p_expr)) {
+			vartable[var] = dynamic_cast<IntPostFixExpr*>(p_expr)->eval();
+		}
+		else if (dynamic_cast<StrPostFixExpr*>(p_expr)) {
+			vartable[var] = dynamic_cast<StrPostFixExpr*>(p_expr)->eval();
+		}
 		else {
-			cerr << "Error: Variable not initialized" << endl;
+			cerr << "Error: Invalid expression type" << endl;
 			exit(-1);
 		}
-		++pc;
+		pc++;
 	}
 };
 
@@ -414,7 +432,7 @@ public:
         StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
         if (strExpr) {
             string val = strExpr->eval();
-            if (val == "") {
+            if (!val.empty()) {
                 ++pc;
             } else {
               pc = elsetarget;
@@ -428,6 +446,7 @@ public:
       p_expr = expr;
     }
     Expr* getExpr(){
+
       return p_expr;
     }
 
@@ -678,7 +697,7 @@ private:
           }
           else if (auto ifstmt = dynamic_cast<IfStmt*>(stmt)) {
             Expr* expr = ifstmt->getExpr();
-            if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
+            if(auto idExpr = dynamic_cast<StrIdExpr*>(expr)) {
               string var = idExpr->getId();
               if(symboltable.count(var) == 0){
                 symboltable[var] = " ";
@@ -686,7 +705,7 @@ private:
             }
             else if (auto strout = dynamic_cast<StrOutStmt*>(expr)) {
               Expr* expr = strout->getExpr();
-              if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
+              if(auto idExpr = dynamic_cast<IntIdExpr*>(expr)) {
                 string var = idExpr->getId();
                 if(symboltable.count(var) == 0){
                   symboltable[var] = " ";
@@ -697,7 +716,7 @@ private:
                   symboltable[lhs] = " ";
                 }
                 Expr* rhs = assign->getExpr();
-                if(auto idExpr = dynamic_cast<IdExpr*>(rhs)) {
+                if(auto idExpr = dynamic_cast<StrIdExpr*>(rhs)) {
                   string rhsvar = idExpr->getId();
                   if(symboltable.count(rhsvar) == 0){
                     symboltable[rhsvar] = " ";
@@ -705,7 +724,7 @@ private:
                 }
               } else if (auto whilestmt = dynamic_cast<WhileStmt*>(expr)) {
                 Expr* expr = whilestmt->getExpr();
-                if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
+                if(auto idExpr = dynamic_cast<StrIdExpr*>(expr)) {
                   string var = idExpr->getId();
                   if(symboltable.count(var) == 0){
                     symboltable[var] = " ";
