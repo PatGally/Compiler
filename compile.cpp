@@ -381,9 +381,9 @@ public:
         if (strExpr) {
             string val = strExpr->eval();
             if (val == "") {
-                pc = elsetarget;
-            } else {
                 ++pc;
+            } else {
+              pc = elsetarget;
             }
         } else {
             ++pc;
