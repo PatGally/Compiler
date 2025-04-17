@@ -84,6 +84,9 @@ public: // Emma
 	string toString(){
        return id;
     }
+   string getId(){
+     return id;
+   }
 };
 
 class IntPostFixExpr : public Expr{	//Might want to change
