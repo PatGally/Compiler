@@ -15,7 +15,7 @@ vector<string> lexemes;
 vector<string> tokens;
 vector<string>::iterator lexitr;
 vector<string>::iterator tokitr;
-map<string, int> vartable; 	// map of variables and their values
+map<string, string> vartable; 	// map of variables and their values
 vector<Stmt *> insttable; 		// table of instructions
 map<string, string> symboltable; // map of variables to datatype (i.e. sum t_integer) variable name : datatype
 map<string, int> precMap; // map of operator precedence
@@ -281,31 +281,29 @@ public:
         return "Assign " + var + " = " + p_expr->toString();
     }
 	void execute() {
-		if (symboltable.find(var) != symboltable.end()) {
-			string varType = symboltable[var];
-			string exprType;
-
-			// Determine the type of the evaluated expression
-			if (p_expr->toString().find_first_not_of("0123456789") == string::npos) {
-				exprType = "t_integer"; // All characters are digits
-			}
-			else {
-				exprType = "t_string"; // Contains non-digit characters
-			}
-
-			// Check for type mismatch
-			if (varType != exprType) {
-				cerr << "Type Error: Cannot assign " << exprType << " to " << varType << endl;
-				exit(-1);
-			}
-
+		if (dynamic_cast<IntegerConstExpr*>(p_expr)) {
 			vartable[var] = dynamic_cast<IntegerConstExpr*>(p_expr)->eval();
 		}
+		else if (dynamic_cast<StringConstExpr*>(p_expr)) {
+			vartable[var] = dynamic_cast<StringConstExpr*>(p_expr)->eval();
+		}
+		else if (dynamic_cast<IntIdExpr*>(p_expr)) {
+			vartable[var] = vartable[dynamic_cast<IntIdExpr*>(p_expr)->getId()];
+		}
+		else if (dynamic_cast<StrIdExpr*>(p_expr)) {
+			vartable[var] = vartable[dynamic_cast<StrIdExpr*>(p_expr)->getId()];
+		}
+		else if (dynamic_cast<IntPostFixExpr*>(p_expr)) {
+			vartable[var] = dynamic_cast<IntPostFixExpr*>(p_expr)->eval();
+		}
+		else if (dynamic_cast<StrPostFixExpr*>(p_expr)) {
+			vartable[var] = dynamic_cast<StrPostFixExpr*>(p_expr)->eval();
+		}
 		else {
-			cerr << "Error: Variable not initialized" << endl;
+			cerr << "Error: Invalid expression type" << endl;
 			exit(-1);
 		}
-		++pc;
+		pc++;
 	}
 };
 
@@ -413,8 +411,8 @@ public:
     void setExpr(Expr* expr){
       p_expr = expr;
     }
-    string getExpr(){
-      return p_expr -> toString();
+    Expr* getExpr() const {
+      return p_expr;
     }
 
     void setTarget(int t){
