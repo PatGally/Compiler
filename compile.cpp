@@ -414,7 +414,7 @@ public:
       p_expr = expr;
     }
     string getExpr(){
-      return p_expr->toString();
+      return p_expr -> toString();
     }
 
     void setTarget(int t){
@@ -664,7 +664,7 @@ private:
           else if (auto ifstmt = dynamic_cast<IfStmt*>(stmt)) {
             Expr* expr = ifstmt->getExpr();
             if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
-              string var = idExpr->getID();
+              string var = idExpr->getId();
               if(symboltable.count(var) == 0){
                 symboltable[var] = " ";
               }
@@ -672,7 +672,7 @@ private:
             else if (auto strout = dynamic_cast<StrOutStmt*>(expr)) {
               Expr* expr = strout->getExpr();
               if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
-                string var = idExpr->getID();
+                string var = idExpr->getId();
                 if(symboltable.count(var) == 0){
                   symboltable[var] = " ";
                 }
@@ -683,7 +683,7 @@ private:
                 }
                 Expr* rhs = assign->getExpr();
                 if(auto idExpr = dynamic_cast<IdExpr*>(rhs)) {
-                  string rhsvar = idExpr->getID();
+                  string rhsvar = idExpr->getId();
                   if(symboltable.count(rhsvar) == 0){
                     symboltable[rhsvar] = " ";
                   }
@@ -691,7 +691,7 @@ private:
               } else if (auto whilestmt = dynamic_cast<WhileStmt*>(expr)) {
                 Expr* expr = whilestmt->getExpr();
                 if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
-                  string var = idExpr->getID();
+                  string var = idExpr->getId();
                   if(symboltable.count(var) == 0){
                     symboltable[var] = " ";
                   }
