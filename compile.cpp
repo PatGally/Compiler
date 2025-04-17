@@ -380,7 +380,11 @@ private:
 	int elsetarget;
 public:
 	IfStmt(){}
-	~IfStmt(){}
+	~IfStmt(){
+      if (p_expr == NULL) {
+        delete p_expr;
+      }
+	}
 	string toString(){
        return "If " + p_expr->toString() + " goto ";
      }
