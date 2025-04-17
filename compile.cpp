@@ -74,9 +74,16 @@ public: // Emma
        id = s;
     }
 	int eval(){
-       return 0;
+       if(vartable.find(id) != vartable.end()){
+         return vartable[id];
+       } else {
+         cerr<<"Error:"<<id<<endl;
+         return 0;
+         }
     }
-	string toString();
+	string toString(){
+       return id;
+    }
 };
 
 class IntPostFixExpr : public Expr{	//Might want to change
@@ -387,6 +394,9 @@ public:
     void setExpr(Expr* expr){
       p_expr = expr;
     }
+    string getExpr(){
+      return p_expr->toString();
+    }
 
     void setTarget(int t){
       elsetarget = t;
@@ -629,9 +639,46 @@ private:
             string var = input->getVar();
             if(symboltable.count(var) == 0){
               symboltable[var] = " ";
-            }
-          } else if (auto ifstmt = dynamic_cast<IfStmt*>(stmt)) {
 
+            }
+          }
+          else if (auto ifstmt = dynamic_cast<IfStmt*>(stmt)) {
+            Expr* expr = ifstmt->getExpr();
+            if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
+              string var = idExpr->getID();
+              if(symboltable.count(var) == 0){
+                symboltable[var] = " ";
+              }
+            }
+            else if (auto strout = dynamic_cast<StrOutStmt*>(expr)) {
+              Expr* expr = strout->getExpr();
+              if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
+                string var = idExpr->getID();
+                if(symboltable.count(var) == 0){
+                  symboltable[var] = " ";
+                }
+              } else if (auto assign = dynamic_cast<AssignStmt*>(expr)) {
+                string lhs = assign->getVar();
+                if(symboltable.count(lhs) == 0){
+                  symboltable[lhs] = " ";
+                }
+                Expr* rhs = assign->getExpr();
+                if(auto idExpr = dynamic_cast<IdExpr*>(rhs)) {
+                  string rhsvar = idExpr->getID();
+                  if(symboltable.count(rhsvar) == 0){
+                    symboltable[rhsvar] = " ";
+                  }
+                }
+              } else if (auto whilestmt = dynamic_cast<WhileStmt*>(expr)) {
+                Expr* expr = whilestmt->getExpr();
+                if(auto idExpr = dynamic_cast<IdExpr*>(expr)) {
+                  string var = idExpr->getID();
+                  if(symboltable.count(var) == 0){
+                    symboltable[var] = " ";
+                  }
+                }
+              }
+            }
           }
         }
      }
