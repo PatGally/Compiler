@@ -702,6 +702,10 @@ private:
 		lexitr = lexemes.begin();
     };
 	void populateSymbolTable(istream& infile){
+          string id, datatype;
+          while (infile >> id >> datatype >> datatype) {
+            symboltable[id] = datatype;
+          }
      }
 
 public:
