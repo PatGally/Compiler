@@ -163,9 +163,7 @@ public:
         }
 	}
 	~IntPostFixExpr(){
-        for (size_t i = 0; i < exprs.size(); ++i) {
-
-        }
+        exprs.clear();
     }
 	int eval() {
 		vector<int> tempNumHolder;
@@ -197,6 +195,7 @@ class StrPostFixExpr : public Expr{	//Might want to change
 //Patrick
 private:
 	vector<string> exprs;
+
 	bool isOperator(string term) {
 		if (precMap.find(term) != precMap.end()) {
 			return true;
@@ -209,11 +208,9 @@ public:
             exprs.push_back(exp[i]);
         }
     }
-	~StrPostFixExpr(){
-        for (size_t i = 0; i < exprs.size(); ++i) {
-
-        }
-    }
+	~StrPostFixExpr() {
+		exprs.clear();
+	}
 	string eval() {
 		string result = "";
 		vector<string> tempStack;
@@ -226,29 +223,29 @@ public:
 				tempStack.pop_back();
 
 				if (token == "==") {
-					tempStack.push_back(a == b ? "" : NULL);
+					tempStack.push_back(a == b ? "" : nullptr);
 				} else if (token == "!=") {
-					tempStack.push_back(a != b ? "" : NULL);
+					tempStack.push_back(a != b ? "" : nullptr);
 				}
 				else if (token == "<") {
-                    tempStack.push_back(a < b ? "" : NULL);
+                    tempStack.push_back(a < b ? "" : nullptr);
                 }
                 else if (token == ">") {
-                    tempStack.push_back(a > b ? "" : NULL);
+                    tempStack.push_back(a > b ? "" : nullptr);
                 }
                 else if (token == "<=") {
-                    tempStack.push_back(a <= b ? "" : NULL);
+                    tempStack.push_back(a <= b ? "" : nullptr);
                 }
                 else if (token == ">=") {
-                    tempStack.push_back(a >= b ? "" : NULL);
+                    tempStack.push_back(a >= b ? "" : nullptr);
                 }
                 else if (token == "and") {
-                	tempStack.push_back((!a.empty() && !b.empty()) ? "" : NULL);}
+                	tempStack.push_back((!a.empty() && !b.empty()) ? "" : nullptr);}
                 else if (token == "or") {
-                    tempStack.push_back(!a.empty() || !b.empty() ? "" : NULL);
+                    tempStack.push_back(!a.empty() || !b.empty() ? "" : nullptr);
                 }
 				else if (token == "+") {
-					tempStack.push_back(a + b);
+					tempStack.push_back(a + b ? "" : nullptr);
 				}
 				else {
 				tempStack.push_back(token);
@@ -295,7 +292,8 @@ public:
         p_expr = expr;
 	}
 	~AssignStmt(){
-        delete p_expr;
+		if (p_expr == NULL)
+			delete p_expr;
     }
 	string toString(){
         return "Assign " + var + " = " + p_expr->toString();
@@ -389,6 +387,7 @@ public:
         p_expr = expr;
     }
 	~ExprOutStmt(){
+		if (p_expr == NULL)
           delete p_expr;
 	}
 	string toString (){
@@ -397,8 +396,21 @@ public:
 	void execute(){
 		if (dynamic_cast<IntegerConstExpr*>(p_expr)) {
 			cout << dynamic_cast<IntegerConstExpr*>(p_expr)->eval() << endl;
-		} else {
+		}
+		else if (dynamic_cast<IntPostFixExpr*>(p_expr)) {
+			cout << dynamic_cast<IntPostFixExpr*>(p_expr)->eval() << endl;
+		}
+		else if (dynamic_cast<StringConstExpr*>(p_expr)) {
 			cout << dynamic_cast<StringConstExpr*>(p_expr)->eval() << endl;
+		}
+		else if (dynamic_cast<StrPostFixExpr*>(p_expr)) {
+			cout << dynamic_cast<StrPostFixExpr*>(p_expr)->eval() << endl;
+		}
+		else if (dynamic_cast<StrIdExpr*>(p_expr)) {
+			cout << vartable[dynamic_cast<StrIdExpr*>(p_expr)->getId()] << endl;
+		}
+		else if (dynamic_cast<IntIdExpr*>(p_expr)) {
+			cout << dynamic_cast<IntIdExpr*>(p_expr)->getId() << endl;
 		}
 		pc++;
 	}
@@ -419,7 +431,7 @@ public:
 	string toString(){
        return "If " + p_expr->toString() + " goto ";
      }
-	void execute() {
+	void execute() {	//Check for the other 4 expressions
     IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
     if (intExpr) {
         int val = intExpr->eval();
@@ -432,7 +444,7 @@ public:
         StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
         if (strExpr) {
             string val = strExpr->eval();
-            if (!val.empty()) {
+            if (val == "") {
                 ++pc;
             } else {
               pc = elsetarget;
@@ -464,10 +476,10 @@ public:
 		p_expr = nullptr;
 		elsetarget = 0;
 	}
-	~WhileStmt(){
+	~WhileStmt(){	//Check for nullptr
 		delete p_expr;
 	}
-	void setExpr(Expr* expr) {
+	void setExpr(Expr* expr) {	//Get rid of it
 		p_expr = expr;
 	}
 
@@ -477,7 +489,7 @@ public:
 	string toString(){
 		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
 	}
-	void execute() {
+	void execute() {	//Check for the other 4 expressions
 	    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
 	    if (intExpr) {
 	        int val = intExpr->eval();
@@ -491,9 +503,9 @@ public:
         StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
         if (strExpr) {
             string val = strExpr->eval();
-            if (val == "") {
+            if (val == "") {		//this is supposed to increment the program counter when true
                 pc = elsetarget;
-            } else {
+            } else {	//this is supposed to assign the pc to elsetarget
                 ++pc;
             }
         } else {
@@ -546,32 +558,34 @@ private:
 
     }
 
-	void buildWhile() {
+	void buildWhile() {	//need two increments, only goes over t-while currently
+		//Set the target at the beginning to loop back to
 		++tokitr;
 		++lexitr;
 
 		Expr* condition = buildExpr();
 
-		if (*tokitr != "t_jump") {
+		if (*tokitr != "t_jump") {	//not a valid token
 			cerr << "Error: Expected 't_jump' after condition in while loop" << endl;
 		}
 
 		++tokitr;
 		++lexitr;
 
-		int line = stoi(*tokitr);
+		int line = stoi(*tokitr);		//Can't stoi a token
 		++tokitr;
 		++lexitr;
 
-		WhileStmt* whileStmt = new WhileStmt();
-		whileStmt->setExpr(condition);
-		whileStmt->setTarget(line);
+		WhileStmt* whileStmt = new WhileStmt();	//Need to buildSTMTs in while block of code by looping through all statments within
+		whileStmt->setExpr(condition); //Get rid of setExpr and pass the condition into the constructor
+		whileStmt->setTarget(line);	//Need a goto statement in the instruction table; Needs the index of the place to loop back to, setTarget for while statement is supposed to store the elsetarget
 		insttable.push_back(whileStmt);
+		//After you do the buildstmts loop, make sure to set the target to the elsepart, so the instruction table can move to the next part of the code
 	}
 
 	void buildStmt(){
 		//Patrick
-		while (tokitr != tokens.end() && *tokitr != "s_rbrace") {
+		while (*tokitr != "s_rbrace") {
 			if (*tokitr == "t_if") {
 				buildIf();
 			} else if (*tokitr == "t_while") {
@@ -625,7 +639,7 @@ private:
 		vector<string> opStack;
 		bool isIntExpr = true;
 
-		while (tokitr != tokens.end() && *tokitr != "s_semi" && *tokitr != "s_rparen") {
+		while (*tokitr != "s_semi" && *tokitr != "s_rparen") {
 			string token = *tokitr;
 			string lexeme = *lexitr;
 
@@ -641,7 +655,7 @@ private:
 					}
 				}
 				outputQueue.push_back(lexeme);
-			} else if (token == "s_plus" || token == "s_minus" || token == "s_mult" || token == "s_div") {
+			} else if (token == "s_plus" || token == "s_minus" || token == "s_mult" || token == "s_div") {	//Check if it's in by using precmap.contains(token)
 				while (!opStack.empty() && precMap[opStack.back()] >= precMap[lexeme]) {
 					outputQueue.push_back(opStack.back());
 					opStack.pop_back();
@@ -667,7 +681,8 @@ private:
 			outputQueue.push_back(opStack.back());
 			opStack.pop_back();
 		}
-
+		//make sure to check for the other four expressions
+		//Also need to do typechecking
 		if (isIntExpr) {
 			return new IntPostFixExpr(outputQueue);
 		} else {
@@ -687,53 +702,6 @@ private:
 		lexitr = lexemes.begin();
     };
 	void populateSymbolTable(istream& infile){
-        for(Stmt* stmt : insttable){
-          if( auto input = dynamic_cast<InputStmt*>(stmt) ) {
-            string var = input->getVar();
-            if(symboltable.count(var) == 0){
-              symboltable[var] = " ";
-
-            }
-          }
-          else if (auto ifstmt = dynamic_cast<IfStmt*>(stmt)) {
-            Expr* expr = ifstmt->getExpr();
-            if(auto idExpr = dynamic_cast<StrIdExpr*>(expr)) {
-              string var = idExpr->getId();
-              if(symboltable.count(var) == 0){
-                symboltable[var] = " ";
-              }
-            }
-            else if (auto strout = dynamic_cast<StrOutStmt*>(expr)) {
-              Expr* expr = strout->getExpr();
-              if(auto idExpr = dynamic_cast<IntIdExpr*>(expr)) {
-                string var = idExpr->getId();
-                if(symboltable.count(var) == 0){
-                  symboltable[var] = " ";
-                }
-              } else if (auto assign = dynamic_cast<AssignStmt*>(expr)) {
-                string lhs = assign->getVar();
-                if(symboltable.count(lhs) == 0){
-                  symboltable[lhs] = " ";
-                }
-                Expr* rhs = assign->getExpr();
-                if(auto idExpr = dynamic_cast<StrIdExpr*>(rhs)) {
-                  string rhsvar = idExpr->getId();
-                  if(symboltable.count(rhsvar) == 0){
-                    symboltable[rhsvar] = " ";
-                  }
-                }
-              } else if (auto whilestmt = dynamic_cast<WhileStmt*>(expr)) {
-                Expr* expr = whilestmt->getExpr();
-                if(auto idExpr = dynamic_cast<StrIdExpr*>(expr)) {
-                  string var = idExpr->getId();
-                  if(symboltable.count(var) == 0){
-                    symboltable[var] = " ";
-                  }
-                }
-              }
-            }
-          }
-        }
      }
 
 public:
