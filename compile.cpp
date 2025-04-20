@@ -96,7 +96,7 @@ public:
   IntIdExpr(int val){
     id = val;
   }
-  string eval(){
+  int eval(){
 
 
   }
@@ -432,7 +432,10 @@ public:
        return "If " + p_expr->toString() + " goto ";
      }
 	void execute() {	//Check for the other 4 expressions
-    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+	IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+	StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+	IntIdExpr* intIdExpr = dynamic_cast<IntIdExpr*>(p_expr);
+	StrIdExpr* strIdExpr = dynamic_cast<StrIdExpr*>(p_expr);
     if (intExpr) {
         int val = intExpr->eval();
         if (val == 0) {
@@ -440,18 +443,27 @@ public:
         } else {
             ++pc;
         }
-    } else {
-        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
-        if (strExpr) {
-            string val = strExpr->eval();
+    } else if (strExpr) {
+        string val = strExpr->eval();
             if (val == "") {
-                ++pc;
+                pc = elsetarget;
             } else {
-              pc = elsetarget;
-            }
-        } else {
-            ++pc;
+              ++pc;
         }
+    } else if (intIdExpr) {
+      	int val = intIdExpr->eval();
+      		if (val == 0) {
+        		pc = elsetarget;
+      		} else{
+        	  ++pc;
+      	}
+    } else if (strIdExpr) {
+      string val = strIdExpr->eval();
+      		if (val == "") {
+        		pc = elsetarget;
+      		} else {
+              ++pc;
+       }
     }
 }
     void setExpr(Expr* expr){
@@ -477,6 +489,7 @@ public:
 		elsetarget = 0;
 	}
 	~WhileStmt(){	//Check for nullptr
+        if (p_expr == nullptr)
 		delete p_expr;
 	}
 	void setExpr(Expr* expr) {	//Get rid of it
@@ -503,10 +516,10 @@ public:
         StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
         if (strExpr) {
             string val = strExpr->eval();
-            if (val == "") {		//this is supposed to increment the program counter when true
-                pc = elsetarget;
-            } else {	//this is supposed to assign the pc to elsetarget
+            if (val == "") {		//this is supposed to increment the program counter when true -> done
                 ++pc;
+            } else {	//this is supposed to assign the pc to elsetarget -> done
+            	pc = elsetarget;
             }
         } else {
             ++pc;
