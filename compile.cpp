@@ -583,6 +583,7 @@ private:
 
 	void buildWhile() {	//need two increments, only goes over t-while currently
 		//Set the target at the beginning to loop back to
+        int whileStmtStart = insttable.size();
 		++tokitr;
 		++lexitr;
 
@@ -591,7 +592,6 @@ private:
 		if (*tokitr != "t_jump") {	//not a valid token
 			cerr << "Error: Expected 't_jump' after condition in while loop" << endl;
 		}
-
 		++tokitr;
 		++lexitr;
 
