@@ -96,7 +96,7 @@ public:
   IntIdExpr(int val){
     id = val;
   }
-  int eval(){
+  int eval(){ // -> need to do this
 
 
   }
@@ -488,12 +488,14 @@ public:
 		p_expr = nullptr;
 		elsetarget = 0;
 	}
+    WhileStmt(Expr* expr, int target){
+      p_expr = expr;
+      elsetarget = target;
+
+    }
 	~WhileStmt(){	//Check for nullptr
-        if (p_expr == nullptr)
+        if (p_expr == NULL)
 		delete p_expr;
-	}
-	void setExpr(Expr* expr) {	//Get rid of it
-		p_expr = expr;
 	}
 
 	void setTarget(int target) {
@@ -586,24 +588,34 @@ private:
         int whileStmtStart = insttable.size();
 		++tokitr;
 		++lexitr;
-
 		Expr* condition = buildExpr();
-
 		if (*tokitr != "t_jump") {	//not a valid token
 			cerr << "Error: Expected 't_jump' after condition in while loop" << endl;
 		}
 		++tokitr;
 		++lexitr;
+        if(tokitr == tokens.end()){
+          cerr << "Error: Expected end of tokens after t_jump" << endl;
+        }
+		int jumpTarget = 0;
+        try {
+          jumpTarget = stoi(*tokitr);
+         } catch (std::exception& e) {
+            cerr << "Error: Expected integer line number after 't_jump', got '" << *tokitr << "'" << endl;
+         }
+         ++tokitr;
+         ++lexitr;
+         WhileStmt* whileStmt = new WhileStmt(condition, jumpTarget);
+         insttable.push_back(whileStmt);
+         while ((tokitr != tokens.end()) && (*tokitr != "t_end")){
+           buildStmt();
+         }
+         if (tokitr == tokens.end() || *tokitr != "t_end" ){
+           cerr << "Error: Expected end of tokens after 't_end' to end while loop" << endl;
+         }
+         ++tokitr;
+         ++lexitr;
 
-		int line = stoi(*tokitr);		//Can't stoi a token
-		++tokitr;
-		++lexitr;
-
-		WhileStmt* whileStmt = new WhileStmt();	//Need to buildSTMTs in while block of code by looping through all statments within
-		whileStmt->setExpr(condition); //Get rid of setExpr and pass the condition into the constructor
-		whileStmt->setTarget(line);	//Need a goto statement in the instruction table; Needs the index of the place to loop back to, setTarget for while statement is supposed to store the elsetarget
-		insttable.push_back(whileStmt);
-		//After you do the buildstmts loop, make sure to set the target to the elsepart, so the instruction table can move to the next part of the code
 	}
 
 	void buildStmt(){
