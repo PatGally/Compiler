@@ -431,7 +431,7 @@ public:
 	string toString(){
        return "If " + p_expr->toString() + " goto ";
      }
-	void execute() {	//Check for the other 4 expressions
+	void execute() {	//Check for the other 4 expressions -> done
 	IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
 	StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
 	IntIdExpr* intIdExpr = dynamic_cast<IntIdExpr*>(p_expr);
@@ -439,30 +439,30 @@ public:
     if (intExpr) {
         int val = intExpr->eval();
         if (val == 0) {
-            pc = elsetarget;
-        } else {
             ++pc;
+        } else {
+            pc = elsetarget;
         }
     } else if (strExpr) {
         string val = strExpr->eval();
             if (val == "") {
-                pc = elsetarget;
+                ++pc;
             } else {
-              ++pc;
+              pc = elsetarget;
         }
     } else if (intIdExpr) {
       	int val = intIdExpr->eval();
       		if (val == 0) {
-        		pc = elsetarget;
-      		} else{
         	  ++pc;
+      		} else{
+        	  pc = elsetarget;
       	}
     } else if (strIdExpr) {
       string val = strIdExpr->eval();
       		if (val == "") {
-        		pc = elsetarget;
+        		++pc;
       		} else {
-              ++pc;
+              pc = elsetarget;
        }
     }
 }
@@ -504,29 +504,39 @@ public:
 	}
 	void execute() {	//Check for the other 4 expressions
 	    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
+        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
+        IntIdExpr* intIdExpr = dynamic_cast<IntIdExpr*>(p_expr);
+        StrIdExpr* strIdExpr = dynamic_cast<StrIdExpr*>(p_expr);
 	    if (intExpr) {
 	        int val = intExpr->eval();
 	        if (val == 0) {
 	            pc = elsetarget;
-	        } else
-	        	{
-					++pc;
-				}
-    } else {
-        StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
-        if (strExpr) {
-            string val = strExpr->eval();
+	        } else {
+			   ++pc;
+			}
+    	} else if (strExpr) {
+        	string val = strExpr->eval();
             if (val == "") {		//this is supposed to increment the program counter when true -> done
                 ++pc;
             } else {	//this is supposed to assign the pc to elsetarget -> done
             	pc = elsetarget;
             }
-        } else {
+        } else if (intIdExpr) {
+            int val = intIdExpr->eval();
+            if (val == 0) {
+              ++pc;
+            } else {
+              pc = elsetarget;
+          }
+        } else if (strIdExpr) {
+          string val = strIdExpr->eval();
+          if (val == "") {
             ++pc;
-            }
+          } else {
+            pc = elsetarget;
+          }
         }
 	}
-
 };
 
 class GoToStmt : public Stmt{
