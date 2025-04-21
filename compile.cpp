@@ -663,32 +663,43 @@ private:
 		vector<string> outputQueue;
 		vector<string> opStack;
 		bool isIntExpr = true;
+		bool hasInt = false;
+		bool hasStr = false;
 
 		while (*tokitr != "s_semi" && *tokitr != "s_rparen") {
 			string token = *tokitr;
 			string lexeme = *lexitr;
 
 			if (token == "t_number") {
+				hasInt = true;
 				outputQueue.push_back(lexeme);
-			} else if (token == "t_text") {
-				isIntExpr = false;
+			}
+			else if (token == "t_text") {
+				hasStr = true;
 				outputQueue.push_back(lexeme);
-			} else if (token == "t_id") {
+			}
+			else if (token == "t_id") {
 				if (symboltable.find(lexeme) != symboltable.end()) {
 					if (symboltable[lexeme] == "t_string") {
-						isIntExpr = false;
+						hasStr = true;
+					} else {
+						hasInt = true;
 					}
 				}
 				outputQueue.push_back(lexeme);
-			} else if (token == "s_plus" || token == "s_minus" || token == "s_mult" || token == "s_div") {	//Check if it's in by using precmap.contains(token)
+			}
+			else if (precMap.find(token) != precMap.end()) {
+				// Operator
 				while (!opStack.empty() && precMap[opStack.back()] >= precMap[lexeme]) {
 					outputQueue.push_back(opStack.back());
 					opStack.pop_back();
 				}
 				opStack.push_back(lexeme);
-			} else if (token == "s_lparen") {
+			}
+			else if (token == "s_lparen") {
 				opStack.push_back(lexeme);
-			} else if (token == "s_rparen") {
+			}
+			else if (token == "s_rparen") {
 				while (!opStack.empty() && opStack.back() != "(") {
 					outputQueue.push_back(opStack.back());
 					opStack.pop_back();
@@ -706,14 +717,18 @@ private:
 			outputQueue.push_back(opStack.back());
 			opStack.pop_back();
 		}
-		//make sure to check for the other four expressions
-		//Also need to do typechecking
-		if (isIntExpr) {
-			return new IntPostFixExpr(outputQueue);
-		} else {
+
+		if (hasInt && hasStr) {
+			cerr << "Type error: cannot mix integers and strings in an expression." << endl;
+		}
+
+		if (hasStr) {
 			return new StrPostFixExpr(outputQueue);
+		} else {
+			return new IntPostFixExpr(outputQueue);
 		}
 	}
+
 
 	// headers for populate methods may not change
 	void populateTokenLexemes(istream& infile){
