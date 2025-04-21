@@ -584,38 +584,28 @@ private:
     }
 
 	void buildWhile() {	//need two increments, only goes over t-while currently
-		//Set the target at the beginning to loop back to
-        int whileStmtStart = insttable.size();
 		++tokitr;
 		++lexitr;
 		Expr* condition = buildExpr();
-		if (*tokitr != "t_jump") {	//not a valid token
-			cerr << "Error: Expected 't_jump' after condition in while loop" << endl;
+		WhileStmt* whileStmt = new WhileStmt(condition, 0);
+		insttable.push_back(whileStmt);
+		if (*tokitr != "{") {
+			cerr << "Error: Expected '{' to start while loop body" << endl;
+			return;
 		}
 		++tokitr;
 		++lexitr;
-        if(tokitr == tokens.end()){
-          cerr << "Error: Expected end of tokens after t_jump" << endl;
-        }
-		int jumpTarget = 0;
-        try {
-          jumpTarget = stoi(*tokitr);
-         } catch (std::exception& e) {
-            cerr << "Error: Expected integer line number after 't_jump', got '" << *tokitr << "'" << endl;
-         }
-         ++tokitr;
-         ++lexitr;
-         WhileStmt* whileStmt = new WhileStmt(condition, jumpTarget);
-         insttable.push_back(whileStmt);
-         while ((tokitr != tokens.end()) && (*tokitr != "t_end")){
-           buildStmt();
-         }
-         if (tokitr == tokens.end() || *tokitr != "t_end" ){
-           cerr << "Error: Expected end of tokens after 't_end' to end while loop" << endl;
-         }
-         ++tokitr;
-         ++lexitr;
-
+		while (*tokitr != "}") {
+			buildStmt();
+		}
+		if (*tokitr != "}") {
+			cerr << "Error: Expected '}' to close while loop body" << endl;
+			return;
+		}
+		int jumpTarget = insttable.size();
+		whileStmt->setTarget(jumpTarget);
+		++tokitr;
+		++lexitr;
 	}
 
 	void buildStmt(){
