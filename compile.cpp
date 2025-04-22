@@ -439,40 +439,37 @@ public:
     if (intExpr) {
         int val = intExpr->eval();
         if (val == 0) {
-            ++pc;
-        } else {
             pc = elsetarget;
+        } else {
+            ++pc;
         }
     } else if (strExpr) {
         string val = strExpr->eval();
             if (val == "") {
-                ++pc;
+                pc = elsetarget;
             } else {
-              pc = elsetarget;
+              ++pc;
         }
     } else if (intIdExpr) {
       	int val = intIdExpr->eval();
       		if (val == 0) {
-        	  ++pc;
-      		} else{
         	  pc = elsetarget;
+      		} else{
+        	  ++pc;
       	}
     } else if (strIdExpr) {
       string val = strIdExpr->eval();
       		if (val == "") {
-        		++pc;
+        		pc = elsetarget;
       		} else {
-              pc = elsetarget;
+              ++pc;
        }
     }
 }
     void setExpr(Expr* expr){
       p_expr = expr;
     }
-    Expr* getExpr(){
 
-      return p_expr;
-    }
 
     void setTarget(int t){
       elsetarget = t;
