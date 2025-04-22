@@ -91,19 +91,22 @@ public: // Emma
 };
 class IntIdExpr : public Expr{
 private:
-    int id;
+    string id;
 public:
-  IntIdExpr(int val){
+  IntIdExpr(string val){
     id = val;
   }
-  int eval(){ // -> need to do this
-
-
+  int eval(){
+    if(vartable.find(id) != vartable.end()){
+    	return std::stoi(vartable[id]);
+    } else {
+      cerr<<"Error:"<<id<<endl;
+      return 0;
+    }
   }
-  int getId(){
+  string getId(){
     return id;
   }
-
 };
 
 class IntPostFixExpr : public Expr{	//Might want to change
