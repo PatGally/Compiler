@@ -181,6 +181,17 @@ public:
 				tempNumHolder.pop_back();
 				int a = tempNumHolder.back();
 				tempNumHolder.pop_back();
+				if (vartable.find(to_string(a)) != vartable.end() && vartable.find(to_string(b)) != vartable.end()) {
+					a = stoi(vartable[to_string(a)]);
+					b = stoi(vartable[to_string(b)]);
+				}
+				else if (vartable.find(to_string(a)) != vartable.end()) {
+					a = stoi(vartable[to_string(a)]);
+				}
+				else if (vartable.find(to_string(b)) != vartable.end()) {
+					b = stoi(vartable[to_string(b)]);
+				}
+
 				result = applyOperator(a, b, token);
 				tempNumHolder.push_back(result);
 			}
