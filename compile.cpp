@@ -91,18 +91,22 @@ public: // Emma
 };
 class IntIdExpr : public Expr{
 private:
-    int id;
+	string id;
 public:
-  IntIdExpr(int val){
-    id = val;
-  }
-  int eval(){ // -> need to do this
-
-
-  }
-  int getId(){
-    return id;
-  }
+	IntIdExpr(string val){
+		id = val;
+	}
+	int eval(){
+		if(vartable.find(id) != vartable.end()){
+			return std::stoi(vartable[id]);
+		} else {
+			cerr<<"Error:"<<id<<endl;
+			return 0;
+		}
+	}
+	string getId(){
+		return id;
+	}
 
 };
 
@@ -341,9 +345,9 @@ class InputStmt : public Stmt{
 private:
 	string var;
 public:
-	InputStmt();
-	~InputStmt();
-	void setVar(const string& v){
+	InputStmt(){}
+	~InputStmt(){}
+	void setVar(string v){
        var = v;
     }
     string getVar(){
@@ -436,7 +440,7 @@ private:
 public:
 	IfStmt(){}
 	~IfStmt(){
-      if (p_expr == nullptr) {
+      if (p_expr == NULL) {
         delete p_expr;
       }
 	}
