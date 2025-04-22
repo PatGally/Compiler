@@ -290,10 +290,13 @@ class Stmt {// statements are executed!
 private:
 	string name;
 public:
-	Stmt(){}
+	Stmt(string stmtName){name  = stmtName;}
 	virtual ~Stmt(){};
 	virtual string toString() = 0;
 	virtual void execute() = 0;
+	string getName(){
+		return name;
+	}
 };
 
 class AssignStmt : public Stmt{ // Stores pointer to expression
@@ -302,7 +305,7 @@ private:
 	string var;
 	Expr* p_expr;
 public:
-	AssignStmt(string id, Expr* expr){
+	AssignStmt(string id, Expr* expr) :Stmt("AssignStmt"){
         var = id;
         p_expr = expr;
 	}
@@ -311,7 +314,7 @@ public:
 			delete p_expr;
     }
 	string toString(){
-        return "Assign " + var + " = " + p_expr->toString();
+        return getName() + var + " = " + p_expr->toString();
     }
 	void execute() {
 		if (dynamic_cast<IntegerConstExpr*>(p_expr)) {
@@ -345,7 +348,7 @@ class InputStmt : public Stmt{
 private:
 	string var;
 public:
-	InputStmt(){}
+	InputStmt() : Stmt("InputStmt"){}
 	~InputStmt(){}
 	void setVar(string v){
        var = v;
@@ -354,7 +357,7 @@ public:
       return var;
     }
 	string toString(){
-       return "Input" + var;
+       return getName() + var;
     }
 	void execute(){
        cout << "Enter value for: " << var << endl;
@@ -370,14 +373,14 @@ class StrOutStmt : public Stmt {
 	private:
 		string value;
 	public:
-		StrOutStmt(const string& val) {
+		StrOutStmt(string& val) : Stmt("StrOutStmt") {
 			value = val;
 		}
 		~StrOutStmt() {
 
 		}
 		string toString() {
-			return "Output" + value;
+			return getName() + value;
 		}
 		void execute() {
 			cout << value << endl;
@@ -399,7 +402,7 @@ class ExprOutStmt : public Stmt{
 private:
 	Expr* p_expr;
 public:
-	ExprOutStmt(Expr* expr){
+	ExprOutStmt(Expr* expr) : Stmt("ExprOutStmt"){
         p_expr = expr;
     }
 	~ExprOutStmt(){
@@ -407,7 +410,7 @@ public:
           delete p_expr;
 	}
 	string toString (){
-        return "Output " + p_expr->toString();
+        return getName() + p_expr->toString();
     }
 	void execute(){
 		if (dynamic_cast<IntegerConstExpr*>(p_expr)) {
@@ -438,14 +441,14 @@ private:
 	Expr* p_expr;
 	int elsetarget ;
 public:
-	IfStmt(){}
+	IfStmt() : Stmt("IfStmt"){}
 	~IfStmt(){
 		if (p_expr == nullptr)
 			delete p_expr;
 
 	}
 	string toString(){
-       return "If " + p_expr->toString() + " goto ";
+       return getName() + p_expr->toString() + " goto ";
      }
 	void execute() {	//Check for the other 4 expressions -> done
 	IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
@@ -513,11 +516,11 @@ private:
 	Expr* p_expr;
 	int elsetarget;
 public:
-	WhileStmt(){
+	WhileStmt() : Stmt("WhileStmt"){
 		p_expr = nullptr;
 		elsetarget = 0;
 	}
-    WhileStmt(Expr* expr, int target){
+    WhileStmt(Expr* expr, int target) : Stmt("WhileStmt"){
       p_expr = expr;
       elsetarget = target;
 
@@ -531,7 +534,7 @@ public:
 		elsetarget = target;
 	}
 	string toString(){
-		return "While " + p_expr->toString() + " goto " + to_string(elsetarget);
+		return getName() + p_expr->toString() + " goto " + to_string(elsetarget);
 	}
 	void execute() {	//Check for the other 4 expressions
 	    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
@@ -591,7 +594,7 @@ class GoToStmt : public Stmt{
 private:
 	int target;
 public:
-	GoToStmt(){
+	GoToStmt() : Stmt("GoToStmt"){
        target = 0;
      }
 	~GoToStmt(){}
@@ -599,7 +602,7 @@ public:
        target = t;
     }
 	string toString(){
-       return "GoTo " + to_string(target);
+       return getName() + to_string(target);
     }
 	void execute(){
       pc = target;
