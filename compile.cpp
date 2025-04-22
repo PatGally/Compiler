@@ -424,7 +424,7 @@ private:
 public:
 	IfStmt(){}
 	~IfStmt(){
-      if (p_expr == NULL) {
+      if (p_expr == nullptr) {
         delete p_expr;
       }
 	}
@@ -436,6 +436,8 @@ public:
 	StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
 	IntIdExpr* intIdExpr = dynamic_cast<IntIdExpr*>(p_expr);
 	StrIdExpr* strIdExpr = dynamic_cast<StrIdExpr*>(p_expr);
+    StrPostFixExpr* strPostFixExpr = dynamic_cast<StrPostFixExpr*>(p_expr);
+    IntPostFixExpr* IntpostFixExpr = dynamic_cast<IntPostFixExpr*>(p_expr);
     if (intExpr) {
         int val = intExpr->eval();
         if (val == 0) {
@@ -464,6 +466,20 @@ public:
       		} else {
               ++pc;
        }
+    } else if (strPostFixExpr) {
+      string val = strPostFixExpr->eval();
+      if (val == "") {
+        pc = elsetarget;
+      } else {
+        ++pc;
+        }
+    } else if (IntpostFixExpr) {
+      int val = IntpostFixExpr->eval();
+      if (val == 0) {
+        pc = elsetarget;
+      } else {
+        ++pc;
+        }
     }
 }
     void setExpr(Expr* expr){
