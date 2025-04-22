@@ -873,6 +873,7 @@ void dump(){
 
 }
 int main(){
+  //emma emma
 
 	ifstream source("../sourcelexemes.txt");
 	ifstream symbols("../vars.txt");
