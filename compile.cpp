@@ -38,6 +38,7 @@ public:
 };
 
 class IntegerConstExpr : public Expr{
+	//Aksel
 private:
 	int value;
 public:
@@ -52,6 +53,7 @@ public:
     }
 };
 class StringConstExpr : public Expr{
+	//Aksel
 private:
 	string value;
 public:
@@ -355,6 +357,7 @@ public:
 };
 
 class StrOutStmt : public Stmt {
+	//Aksel
 	private:
 		string value;
 	public:
@@ -497,6 +500,7 @@ public:
 };
 
 class WhileStmt : public Stmt{
+	//Aksel
 private:
 	Expr* p_expr;
 	int elsetarget;
@@ -615,12 +619,15 @@ private:
 
     }
 
-	void buildWhile() {	//need two increments, only goes over t-while currently
-		++tokitr;
-		++lexitr;
+	void buildWhile() {
+		//Aksel
+		++tokitr; //iterating under t_while
+		++lexitr; //iterating under t_while
+		++tokitr; //iterating under t_lparen
+		++lexitr; //iterating under t_lparen
 		Expr* condition = buildExpr();
-		WhileStmt* whileStmt = new WhileStmt(condition, 0);
-		insttable.push_back(whileStmt);
+		WhileStmt whileStmt(condition, 0);
+		insttable.push_back(&whileStmt);
 		if (*tokitr != "{") {
 			cerr << "Error: Expected '{' to start while loop body" << endl;
 			return;
@@ -635,7 +642,7 @@ private:
 			return;
 		}
 		int jumpTarget = insttable.size();
-		whileStmt->setTarget(jumpTarget);
+		whileStmt.setTarget(jumpTarget);
 		++tokitr;
 		++lexitr;
 	}
@@ -694,7 +701,6 @@ private:
 	Expr* buildExpr() {
 		vector<string> outputQueue;
 		vector<string> opStack;
-		bool isIntExpr = true;
 		bool hasInt = false;
 		bool hasStr = false;
 
