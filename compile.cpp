@@ -345,6 +345,7 @@ public:
        cout << "Enter value for: " << var << endl;
        int val;
        cin >> val;
+       cin >> val;
        vartable[var] = val;
        ++pc;
     }
@@ -506,8 +507,8 @@ public:
       elsetarget = target;
 
     }
-	~WhileStmt(){	//Check for nullptr
-        if (p_expr == NULL)
+	~WhileStmt(){
+        if (p_expr == nullptr)
 		delete p_expr;
 	}
 
@@ -522,6 +523,8 @@ public:
         StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
         IntIdExpr* intIdExpr = dynamic_cast<IntIdExpr*>(p_expr);
         StrIdExpr* strIdExpr = dynamic_cast<StrIdExpr*>(p_expr);
+		StrPostFixExpr* strPostFixExpr = dynamic_cast<StrPostFixExpr*>(p_expr);
+		IntPostFixExpr* intPostFixExpr = dynamic_cast<IntPostFixExpr*>(p_expr);
 	    if (intExpr) {
 	        int val = intExpr->eval();
 	        if (val == 0) {
@@ -539,9 +542,9 @@ public:
         } else if (intIdExpr) {
             int val = intIdExpr->eval();
             if (val == 0) {
-              ++pc;
-            } else {
               pc = elsetarget;
+            } else {
+              ++pc;
           }
         } else if (strIdExpr) {
           string val = strIdExpr->eval();
@@ -550,7 +553,20 @@ public:
           } else {
             pc = elsetarget;
           }
-        }
+        } else if (strPostFixExpr) {
+        	string val = strPostFixExpr->eval();
+        	if (val == "") {
+        		pc = elsetarget;
+        	} else {
+        		++pc;
+        	}
+        } else if (intPostFixExpr) {
+        	int val = intPostFixExpr->eval();
+        	if (val == 0) {
+        		pc = elsetarget;
+        	} else {
+        		++pc;
+        	}
 	}
 };
 
