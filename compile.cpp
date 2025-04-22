@@ -488,7 +488,7 @@ public:
         pc = elsetarget;
       } else {
         ++pc;
-        }
+      }
     } else if (IntpostFixExpr) {
       int val = IntpostFixExpr->eval();
       if (val == 0) {
@@ -860,8 +860,8 @@ void dump(){
 }
 int main(){
 
-	ifstream source("sourcelexemes.txt");
-	ifstream symbols("vars.txt");
+	ifstream source("../sourcelexemes.txt");
+	ifstream symbols("../vars.txt");
 	if (!source || !symbols) exit(-1);
 	Compiler c(source, symbols);
 	c.compile();
