@@ -315,7 +315,7 @@ public:
     }
 	void execute() {
 		if (dynamic_cast<IntegerConstExpr*>(p_expr)) {
-			vartable[var] = dynamic_cast<IntegerConstExpr*>(p_expr)->eval();
+			vartable[var] = to_string(dynamic_cast<IntegerConstExpr*>(p_expr)->eval());
 		}
 		else if (dynamic_cast<StringConstExpr*>(p_expr)) {
 			vartable[var] = dynamic_cast<StringConstExpr*>(p_expr)->eval();
@@ -327,7 +327,7 @@ public:
 			vartable[var] = dynamic_cast<StrIdExpr*>(p_expr)->getId();
 		}
 		else if (dynamic_cast<IntPostFixExpr*>(p_expr)) {
-			vartable[var] = dynamic_cast<IntPostFixExpr*>(p_expr)->eval();
+			vartable[var] = to_string(dynamic_cast<IntPostFixExpr*>(p_expr)->eval());
 		}
 		else if (dynamic_cast<StrPostFixExpr*>(p_expr)) {
 			vartable[var] = *(dynamic_cast<StrPostFixExpr*>(p_expr)->eval());
@@ -440,9 +440,9 @@ private:
 public:
 	IfStmt(){}
 	~IfStmt(){
-      if (p_expr == NULL) {
-        delete p_expr;
-      }
+		if (p_expr == nullptr)
+			delete p_expr;
+
 	}
 	string toString(){
        return "If " + p_expr->toString() + " goto ";
