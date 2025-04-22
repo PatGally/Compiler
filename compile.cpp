@@ -216,7 +216,7 @@ public:
 		exprs.clear();
 	}
 	string* eval() {
-		string* result = *"";
+		string* result = nullptr;
 		vector<string> tempStack;
 
 		for (const string& token : exprs) {
@@ -260,7 +260,7 @@ public:
                     tempStack.push_back(!a.empty() || !b.empty() ? "" : nullptr);
                 }
 				else if (token == "+") {
-					tempStack.push_back(a + b ? "" : nullptr);
+					tempStack.push_back(a + b);
 				}
 				else {
 				tempStack.push_back(token);
