@@ -38,6 +38,7 @@ public:
 };
 
 class IntegerConstExpr : public Expr{
+	//Aksel
 private:
 	int value;
 public:
@@ -52,6 +53,7 @@ public:
     }
 };
 class StringConstExpr : public Expr{
+	//Aksel
 private:
 	string value;
 public:
@@ -103,6 +105,9 @@ public:
 			cerr<<"Error:"<<id<<endl;
 			return 0;
 		}
+	}
+	string toString() {
+		return id;
 	}
 	string getId(){
 		return id;
@@ -381,6 +386,7 @@ public:
 };
 
 class StrOutStmt : public Stmt {
+	//Aksel
 	private:
 		string value;
 	public:
@@ -523,6 +529,7 @@ public:
 };
 
 class WhileStmt : public Stmt{
+	//Aksel
 private:
 	Expr* p_expr;
 	int elsetarget;
@@ -642,30 +649,45 @@ private:
 
     }
 
-	void buildWhile() {	//need two increments, only goes over t-while currently
-		++tokitr;
+	void buildWhile() {
+		//Aksel
+		++tokitr;  // Move over "t_while"
 		++lexitr;
+		++tokitr;  // Move over "("
+		++lexitr;
+
 		Expr* condition = buildExpr();
+
 		WhileStmt* whileStmt = new WhileStmt(condition, 0);
 		insttable.push_back(whileStmt);
+
 		if (*tokitr != "{") {
 			cerr << "Error: Expected '{' to start while loop body" << endl;
 			return;
 		}
 		++tokitr;
 		++lexitr;
-		while (*tokitr != "}") {
-			buildStmt();
+
+		if (*tokitr == "}") {
+			++tokitr;
+			++lexitr;
+		} else {
+			while (*tokitr != "}") {
+				buildStmt();
+			}
 		}
+
 		if (*tokitr != "}") {
 			cerr << "Error: Expected '}' to close while loop body" << endl;
 			return;
 		}
-		int jumpTarget = insttable.size();
-		whileStmt->setTarget(jumpTarget);
 		++tokitr;
 		++lexitr;
+
+		int jumpTarget = insttable.size();
+		whileStmt->setTarget(jumpTarget);
 	}
+
 
 	void buildStmt(){
 		//Patrick
@@ -719,11 +741,42 @@ private:
 	}
 
 	Expr* buildExpr() {
+		//Aksel
 		vector<string> outputQueue;
 		vector<string> opStack;
-		bool isIntExpr = true;
 		bool hasInt = false;
 		bool hasStr = false;
+
+		string firstToken = *tokitr;
+		string firstLexeme = *lexitr;
+
+		auto lookaheadTok = tokitr;
+		auto lookaheadLex = lexitr;
+		++lookaheadTok;
+		++lookaheadLex;
+
+		if (firstToken == "t_text" && *lookaheadTok == "s_rparen") {
+			string val = *lexitr;
+			++tokitr; ++lexitr;
+			return new StringConstExpr(val);
+		}
+		if (firstToken == "t_number" && *lookaheadTok == "s_rparen") {
+			string val = *lexitr;
+			++tokitr; ++lexitr;
+			return new IntegerConstExpr(stoi(val));
+		}
+
+		if (firstToken == "t_id" && *lookaheadTok == "s_rparen") {
+			string varName = *lexitr;
+			++tokitr; ++lexitr;
+			if (symboltable.find(varName) != symboltable.end()) {
+				if (symboltable[varName] == "t_string") {
+					return new StrIdExpr(varName);
+				} else {
+					return new IntIdExpr(varName);
+				}
+			}
+		}
 
 		while (*tokitr != "s_semi" && *tokitr != "s_rparen") {
 			string token = *tokitr;
@@ -748,7 +801,6 @@ private:
 				outputQueue.push_back(lexeme);
 			}
 			else if (precMap.find(token) != precMap.end()) {
-				// Operator
 				while (!opStack.empty() && precMap[opStack.back()] >= precMap[lexeme]) {
 					outputQueue.push_back(opStack.back());
 					opStack.pop_back();
@@ -767,30 +819,31 @@ private:
 					opStack.pop_back();
 				}
 			}
-
-			++tokitr;
-			++lexitr;
-		}
-
-		while (!opStack.empty()) {
-			outputQueue.push_back(opStack.back());
-			opStack.pop_back();
-		}
-
-		if (hasInt && hasStr) {
-			cerr << "Type error: cannot mix integers and strings in an expression." << endl;
-		}
-
-		if (hasStr) {
-			return new StrPostFixExpr(outputQueue);
-		} else {
-			return new IntPostFixExpr(outputQueue);
-		}
+		++tokitr;
+		++lexitr;
 	}
+
+	while (!opStack.empty()) {
+		outputQueue.push_back(opStack.back());
+		opStack.pop_back();
+	}
+
+	if (hasInt && hasStr) {
+		cerr << "Type error: cannot mix integers and strings in an expression." << endl;
+	}
+
+	if (hasStr) {
+		return new StrPostFixExpr(outputQueue);
+	} else {
+		return new IntPostFixExpr(outputQueue);
+	}
+}
+
 
 
 	// headers for populate methods may not change
 	void populateTokenLexemes(istream& infile){
+		//Aksel
 		string token, lexeme;
 		while (infile >> token >> lexeme) {
 			tokens.push_back(token);
@@ -848,6 +901,7 @@ public:
 	// The run method will execute the code in the instruction
 	// table.
 	void run(){
+		//Aksel
 		pc = 0;
 		while (pc < insttable.size()) {
 			insttable[pc]->execute();
