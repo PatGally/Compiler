@@ -730,7 +730,6 @@ private:
 				outputQueue.push_back(lexeme);
 			}
 			else if (precMap.find(token) != precMap.end()) {
-				// Operator
 				while (!opStack.empty() && precMap[opStack.back()] >= precMap[lexeme]) {
 					outputQueue.push_back(opStack.back());
 					opStack.pop_back();
