@@ -211,8 +211,8 @@ public:
 	~StrPostFixExpr() {
 		exprs.clear();
 	}
-	string eval() {
-		string result = "";
+	string* eval() {
+		string* result = *"";
 		vector<string> tempStack;
 
 		for (const string& token : exprs) {
@@ -267,7 +267,7 @@ public:
 		}
 
 		if (!tempStack.empty()) {
-			result = tempStack.back();
+			result = &tempStack.back();
 		}
 		return result;
 	}
@@ -320,13 +320,13 @@ public:
 			vartable[var] = dynamic_cast<IntIdExpr*>(p_expr)->getId();
 		}
 		else if (dynamic_cast<StrIdExpr*>(p_expr)) {
-			vartable[var] = vartable[dynamic_cast<StrIdExpr*>(p_expr)->getId()];
+			vartable[var] = dynamic_cast<StrIdExpr*>(p_expr)->getId();
 		}
 		else if (dynamic_cast<IntPostFixExpr*>(p_expr)) {
 			vartable[var] = dynamic_cast<IntPostFixExpr*>(p_expr)->eval();
 		}
 		else if (dynamic_cast<StrPostFixExpr*>(p_expr)) {
-			vartable[var] = dynamic_cast<StrPostFixExpr*>(p_expr)->eval();
+			vartable[var] = *(dynamic_cast<StrPostFixExpr*>(p_expr)->eval());
 		}
 		else {
 			cerr << "Error: Invalid expression type" << endl;
@@ -419,7 +419,7 @@ public:
 			cout << dynamic_cast<StrPostFixExpr*>(p_expr)->eval() << endl;
 		}
 		else if (dynamic_cast<StrIdExpr*>(p_expr)) {
-			cout << vartable[dynamic_cast<StrIdExpr*>(p_expr)->getId()] << endl;
+			cout << dynamic_cast<StrIdExpr*>(p_expr)->getId() << endl;
 		}
 		else if (dynamic_cast<IntIdExpr*>(p_expr)) {
 			cout << dynamic_cast<IntIdExpr*>(p_expr)->getId() << endl;
@@ -479,8 +479,8 @@ public:
               ++pc;
        }
     } else if (strPostFixExpr) {
-      string val = strPostFixExpr->eval();
-      if (val == "") {
+      string* val = strPostFixExpr->eval();
+      if (*val == "") {
         pc = elsetarget;
       } else {
         ++pc;
@@ -565,8 +565,8 @@ public:
             pc = elsetarget;
           }
         } else if (strPostFixExpr) {
-        	string val = strPostFixExpr->eval();
-        	if (val == "") {
+        	string* val = strPostFixExpr->eval();
+        	if (*val == "") {
         		pc = elsetarget;
         	} else {
         		++pc;
