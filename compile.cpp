@@ -292,7 +292,7 @@ public:
         p_expr = expr;
 	}
 	~AssignStmt(){
-		if (p_expr == NULL)
+		if (p_expr == nullptr)
 			delete p_expr;
     }
 	string toString(){
@@ -387,7 +387,7 @@ public:
         p_expr = expr;
     }
 	~ExprOutStmt(){
-		if (p_expr == NULL)
+		if (p_expr == nullptr)
           delete p_expr;
 	}
 	string toString (){
