@@ -585,7 +585,9 @@ public:
 	GoToStmt(){
        target = 0;
      }
-	~GoToStmt(){}
+	~GoToStmt(){
+
+	}
 	void setTarget(int t){
        target = t;
     }
@@ -835,14 +837,29 @@ public:
 };
 
 // prints vartable, instable, symboltable
-void dump();
-int main(){
+void dump(){
+  cout << "-------Variable Table-----"<<endl;
+  for(const auto & pair : symboltable){
+    cout << pair.first <<" "<<pair.second<<endl;
+  }
+  cout << "\n-------Symbol Table-----"<<endl;
+  for(const auto & pair : symboltable){
+    cout << pair.first <<" "<<pair.second<<endl;
+  }
+  cout << "\n-------Instruction Table-----"<<endl;
+  for(size_t i = 0; i < insttable.size(); i++){
+    cout << i <<" "<<insttable[i] ->toString() <<endl;
+  }
+  cout << "\n------------------------"<<endl;
 
+}
+int main(){
 	ifstream source("sourcelexemes.txt");
 	ifstream symbols("vars.txt");
 	if (!source || !symbols) exit(-1);
 	Compiler c(source, symbols);
 	c.compile();
+    dump();
 	// might want to call dump to check if everything built correctly
 	// dump();
 	c.run();
