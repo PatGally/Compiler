@@ -838,7 +838,22 @@ public:
 };
 
 // prints vartable, instable, symboltable
-void dump();
+void dump(){
+	cout << "-------Variable Table-----"<<endl;
+	for(const auto & pair : symboltable){
+		cout << pair.first <<" "<<pair.second<<endl;
+	}
+	cout << "\n-------Symbol Table-----"<<endl;
+	for(const auto & pair : symboltable){
+		cout << pair.first <<" "<<pair.second<<endl;
+	}
+	cout << "\n-------Instruction Table-----"<<endl;
+	for(size_t i = 0; i < insttable.size(); i++){
+		cout << i <<" "<<insttable[i] ->toString() <<endl;
+	}
+	cout << "\n------------------------"<<endl;
+
+}
 int main(){
 
 	ifstream source("sourcelexemes.txt");
