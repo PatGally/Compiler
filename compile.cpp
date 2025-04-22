@@ -699,6 +699,7 @@ private:
 	}
 
 	Expr* buildExpr() {
+		//Aksel
 		vector<string> outputQueue;
 		vector<string> opStack;
 		bool hasInt = false;
@@ -770,6 +771,7 @@ private:
 
 	// headers for populate methods may not change
 	void populateTokenLexemes(istream& infile){
+		//Aksel
 		string token, lexeme;
 		while (infile >> token >> lexeme) {
 			tokens.push_back(token);
@@ -827,6 +829,7 @@ public:
 	// The run method will execute the code in the instruction
 	// table.
 	void run(){
+		//Aksel
 		pc = 0;
 		while (pc < insttable.size()) {
 			insttable[pc]->execute();
