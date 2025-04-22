@@ -572,12 +572,13 @@ public:
         		++pc;
         	}
         } else if (intPostFixExpr) {
-        	int val = intPostFixExpr->eval();
+	        int val = intPostFixExpr->eval();
         	if (val == 0) {
         		pc = elsetarget;
         	} else {
         		++pc;
         	}
+        }
 	}
 };
 
