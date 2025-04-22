@@ -432,7 +432,7 @@ class IfStmt : public Stmt{
   // Emma
 private:
 	Expr* p_expr;
-	int elsetarget;
+	int elsetarget ;
 public:
 	IfStmt(){}
 	~IfStmt(){
