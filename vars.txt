@@ -1,2 +1,8 @@
-x t_number
-y t_number
+intPostFixExpr_ConstOnly t_integer
+intPostFixExpr_VarsOnly t_integer
+strPostFixExpr_ConstOnly t_string
+strPostFixExpr_VarsOnly t_string
+strConstExpr t_string
+intConstExpr t_integer
+intIdExpr t_integer
+strIdExpr t_string

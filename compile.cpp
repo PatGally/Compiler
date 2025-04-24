@@ -1,3 +1,10 @@
+/*
+*Patrick Gallavan, Emma Camp, Aksel Del Toro
+ * Sent in a file of lexemes and a file of variable types of a program to be compiled. This program, compiles the files
+ * into a instruction table to be later executed during run time. After run time it will output the contents of the
+ * symbol table, and variable table as well as the contents of the instruction table.
+ */
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -5,36 +12,30 @@
 #include <string>
 using namespace std;
 
-// You will need these forward references.
+
+
+
 class Expr;
 class Stmt;
 
-// Runtime Global Variables
-int pc;  // program counter, is incremented after excution method is called or gets assigned to the line it needs to jump or loop up to
+
+int pc;
 vector<string> lexemes;
 vector<string> tokens;
 vector<string>::iterator lexitr;
 vector<string>::iterator tokitr;
-map<string, string> vartable; 	// map of variables and their values
-vector<Stmt *> insttable; 		// table of instructions
-map<string, string> symboltable; // map of variables to datatype (i.e. sum t_integer) variable name : datatype
-map<string, int> precMap; // map of operator precedence
+map<string, string> vartable;
+vector<Stmt *> insttable;
+map<string, string> symboltable;
+map<string, int> precMap;
 
 
-// Runtime Global Methods
-void dump(); 				// prints vartable, instable, symboltable
+void dump();
 
-// You may need a few additional global methods to manipulate the global variables
-
-
-// Classes Stmt and Expr
-// It is assumed some methods in statement and expression objects will change and
-// you may need to add a few new ones.
-
-class Expr{ // expressions are evaluated!
+class Expr{
 public:
-	virtual string toString() = 0;	//Takes contents of something and displays it through dump
-	virtual ~Expr(){}	//Destroys object correctly
+	virtual string toString() = 0;
+	virtual ~Expr(){}
 };
 
 class IntegerConstExpr : public Expr{
@@ -68,7 +69,7 @@ public:
 	}
 };
 
-class StrIdExpr : public Expr{	//Id expression, you have a variable, need to look for value in variable table
+class StrIdExpr : public Expr{
 private:
 	string id;
 public: // Emma
@@ -92,6 +93,7 @@ public: // Emma
    }
 };
 class IntIdExpr : public Expr{
+	//Emma
 private:
 	string id;
 public:
@@ -115,7 +117,7 @@ public:
 
 };
 
-class IntPostFixExpr : public Expr{	//Might want to change
+class IntPostFixExpr : public Expr{
 //Patrick
 private:
 	vector<string> exprs;
@@ -178,8 +180,11 @@ public:
 		vector<int> tempNumHolder;
 		int result = 0;
 		for (const string& token : exprs) {
-			if (isdigit(token[0])) {
-				tempNumHolder.push_back(stoi(token));
+			if (vartable.find(token) != vartable.end() && isdigit(vartable[token][0])) {
+				tempNumHolder.push_back(stoi(vartable[token]));
+			}
+		    else if (isdigit(token[0])) {
+  				tempNumHolder.push_back(stoi(token));
 			}
 			else if (isOperator(token)) {
 				int b = tempNumHolder.back();
@@ -232,51 +237,105 @@ public:
 		exprs.clear();
 	}
 	string* eval() {
-		string* result = nullptr;
+		string* result = new string();
 		vector<string> tempStack;
 
 		for (const string& token : exprs) {
 			if (isOperator(token)) {
 				string b = tempStack.back();
+				string* tempB = &b;
 				tempStack.pop_back();
 				string a = tempStack.back();
+				string* tempA = &a;
 				tempStack.pop_back();
 
-				if (vartable.find(a) != vartable.end() && vartable.find(b) != vartable.end()) {
-                    a = vartable[a];
-					b = vartable[b];
+				if (vartable.find(*tempA) != vartable.end() && vartable.find(*tempB) != vartable.end()) {
+                    *tempA = vartable[*tempA];
+					*tempB = vartable[*tempB];
                 }
-				else if (vartable.find(a) != vartable.end()) {
-                    a = vartable[a];
+				else if (vartable.find(*tempA) != vartable.end()) {
+                    *tempA = vartable[*tempA];
                 }
-                else if (vartable.find(b) != vartable.end()) {
-                    b = vartable[b];
+                else if (vartable.find(*tempB) != vartable.end()) {
+                    *tempB = vartable[*tempB];
                 }
 
+				if (*tempB == "nullptr") {
+					tempB = nullptr;
+				}
+				if (*tempA == "nullptr") {
+					tempA = nullptr;
+				}
+
 				if (token == "==") {
-					tempStack.push_back(a == b ? "" : nullptr);
+					if (tempA == nullptr || tempB == nullptr) {
+						tempStack.push_back("nullptr");
+					}
+					else {
+						tempStack.push_back(*tempA == *tempB ? "" : "nullptr");
+					}
 				} else if (token == "!=") {
-					tempStack.push_back(a != b ? "" : nullptr);
+					if (tempA == nullptr || tempB == nullptr) {
+						tempStack.push_back("nullptr");
+					}
+					else {
+						tempStack.push_back(*tempA == *tempB ? "" : "nullptr");
+					}
 				}
 				else if (token == "<") {
-                    tempStack.push_back(a < b ? "" : nullptr);
+					if (tempA == nullptr || tempB == nullptr) {
+						tempStack.push_back("nullptr");
+					}
+					else {
+						tempStack.push_back(*tempA < *tempB ? "" : "nullptr");
+					}
                 }
                 else if (token == ">") {
-                    tempStack.push_back(a > b ? "" : nullptr);
+                	if (tempA == nullptr || tempB == nullptr) {
+                		tempStack.push_back("nullptr");
+                	}
+                	else {
+                		tempStack.push_back(*tempA > *tempB ? "" : "nullptr");
+                	}
                 }
                 else if (token == "<=") {
-                    tempStack.push_back(a <= b ? "" : nullptr);
+                	if (tempA == nullptr || tempB == nullptr) {
+                		tempStack.push_back("nullptr");
+                	}
+                	else {
+                		tempStack.push_back(*tempA <= *tempB ? "" : "nullptr");
+                	}
                 }
                 else if (token == ">=") {
-                    tempStack.push_back(a >= b ? "" : nullptr);
+                	if (tempA == nullptr || tempB == nullptr) {
+                		tempStack.push_back("nullptr");
+                	}
+                	else {
+                		tempStack.push_back(*tempA >= *tempB ? "" : "nullptr");
+                	}
                 }
                 else if (token == "and") {
-                	tempStack.push_back((!a.empty() && !b.empty()) ? "" : nullptr);}
+                	if (tempA == nullptr || tempB == nullptr) {
+                		tempStack.push_back("nullptr");
+                	}
+                	else {
+                		tempStack.push_back((!a.empty() && !b.empty()) ? "" : "nullptr");}
+                	}
                 else if (token == "or") {
-                    tempStack.push_back(!a.empty() || !b.empty() ? "" : nullptr);
+                	if (tempA == nullptr || tempB == nullptr) {
+                		tempStack.push_back("nullptr");
+                	}
+                	else {
+                		tempStack.push_back(!a.empty() || !b.empty() ? "" : "nullptr");
+                	}
                 }
 				else if (token == "+") {
-					tempStack.push_back(a + b);
+					if (tempA == nullptr || tempB == nullptr) {
+						tempStack.push_back("nullptr");
+					}
+					else {
+						tempStack.push_back(*tempA + *tempB);
+					}
 				}
 				else {
 				tempStack.push_back(token);
@@ -287,7 +346,7 @@ public:
 		}
 
 		if (!tempStack.empty()) {
-			result = &tempStack.back();
+			*result = tempStack.back();
 		}
 		return result;
 	}
@@ -302,7 +361,7 @@ public:
 
 };
 
-class Stmt {// statements are executed!
+class Stmt {
 private:
 	string name;
 public:
@@ -349,7 +408,9 @@ public:
 			vartable[var] = to_string(dynamic_cast<IntPostFixExpr*>(p_expr)->eval());
 		}
 		else if (dynamic_cast<StrPostFixExpr*>(p_expr)) {
-			vartable[var] = *(dynamic_cast<StrPostFixExpr*>(p_expr)->eval());
+			string* postfix = (dynamic_cast<StrPostFixExpr*>(p_expr)->eval());
+			vartable[var] = *postfix;
+			delete postfix;
 		}
 		else {
 			cerr << "Error: Invalid expression type" << endl;
@@ -375,14 +436,32 @@ public:
 	string toString(){
        return getName() + var;
     }
-	void execute(){
-       cout << "Enter value for: " << var << endl;
-       int val;
-       cin >> val;
-       cin >> val;
-       vartable[var] = val;
-       ++pc;
-    }
+	void execute() {
+		cout << "Enter value for: " << var << endl;
+		string val;
+		cin >> val;
+		bool isInteger = false;
+		if (symboltable.find(var) != symboltable.end()) {
+			if (symboltable[var] == "t_integer") {
+				for (int i = 0; i < val.length(); i++) {
+					if (isdigit(val[i])) {
+						isInteger = true;
+					}
+				}
+				if (isInteger) {
+					vartable[var] = val;
+				}
+				else {
+					cerr << "Error: Input value is not an integer." << endl;
+					return;
+				}
+			}
+			else {
+				vartable[var] = val;
+			}
+			++pc;
+		}
+	}
 };
 
 class StrOutStmt : public Stmt {
@@ -440,7 +519,14 @@ public:
 			cout << dynamic_cast<StringConstExpr*>(p_expr)->eval() << endl;
 		}
 		else if (dynamic_cast<StrPostFixExpr*>(p_expr)) {
-			cout << dynamic_cast<StrPostFixExpr*>(p_expr)->eval() << endl;
+			string* result = dynamic_cast<StrPostFixExpr*>(p_expr)->eval();
+			if (*result == "nullptr") {
+				cout << "FALSE" << endl;
+			}
+			else {
+				cout << *result << endl;
+			}
+			delete result;
 		}
 		else if (dynamic_cast<StrIdExpr*>(p_expr)) {
 			cout << dynamic_cast<StrIdExpr*>(p_expr)->getId() << endl;
@@ -450,6 +536,27 @@ public:
 		}
 		pc++;
 	}
+};
+
+class GoToStmt : public Stmt{
+	//Emma
+private:
+	int target;
+public:
+	GoToStmt() : Stmt("GoToStmt"){
+		target = 0;
+	}
+	~GoToStmt(){}
+	void setTarget(int t){
+		target = t;
+	}
+	string toString(){
+		return getName() + to_string(target);
+	}
+	void execute(){
+		pc = target;
+	}
+
 };
 
 class IfStmt : public Stmt{
@@ -467,7 +574,7 @@ public:
 	string toString(){
        return getName() + p_expr->toString() + " goto ";
      }
-	void execute() {	//Check for the other 4 expressions -> done
+	void execute() {
 	IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
 	StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
 	IntIdExpr* intIdExpr = dynamic_cast<IntIdExpr*>(p_expr);
@@ -484,9 +591,9 @@ public:
     } else if (strExpr) {
         string val = strExpr->eval();
             if (val == "") {
-                pc = elsetarget;
+                pc++;
             } else {
-              ++pc;
+            	pc = elsetarget;
         }
     } else if (intIdExpr) {
       	int val = intIdExpr->eval();
@@ -498,16 +605,16 @@ public:
     } else if (strIdExpr) {
       string val = strIdExpr->eval();
       		if (val == "") {
-        		pc = elsetarget;
+        		++pc;
       		} else {
-              ++pc;
+      			pc = elsetarget;
        }
     } else if (strPostFixExpr) {
       string* val = strPostFixExpr->eval();
       if (*val == "") {
-        pc = elsetarget;
-      } else {
         ++pc;
+      } else {
+      	pc = elsetarget;
       }
     } else if (IntpostFixExpr) {
       int val = IntpostFixExpr->eval();
@@ -554,7 +661,7 @@ public:
 	string toString(){
 		return getName() + p_expr->toString() + " goto " + to_string(elsetarget);
 	}
-	void execute() {	//Check for the other 4 expressions
+	void execute() {
 	    IntegerConstExpr* intExpr = dynamic_cast<IntegerConstExpr*>(p_expr);
         StringConstExpr* strExpr = dynamic_cast<StringConstExpr*>(p_expr);
         IntIdExpr* intIdExpr = dynamic_cast<IntIdExpr*>(p_expr);
@@ -570,9 +677,9 @@ public:
 			}
     	} else if (strExpr) {
         	string val = strExpr->eval();
-            if (val == "") {		//this is supposed to increment the program counter when true -> done
+            if (val == "") {
                 ++pc;
-            } else {	//this is supposed to assign the pc to elsetarget -> done
+            } else {
             	pc = elsetarget;
             }
         } else if (intIdExpr) {
@@ -607,53 +714,49 @@ public:
 	}
 };
 
-class GoToStmt : public Stmt{
-  //Emma
-private:
-	int target;
-public:
-	GoToStmt() : Stmt("GoToStmt"){
-       target = 0;
-     }
-	~GoToStmt(){}
-	void setTarget(int t){
-       target = t;
-    }
-	string toString(){
-       return getName() + to_string(target);
-    }
-	void execute(){
-      pc = target;
-    }
-
-};
 
 class Compiler{
 private:
 	void buildIf(){
+		//Emma
        ++tokitr;
        ++lexitr;
-       Expr* condition = nullptr;
-       buildExpr();
-       if(*tokitr == "t_jump"){
-         cerr << "Incorrect Syntax" << endl;
-         exit(-1);
-       }
-       ++tokitr;
-       int line = stoi(*tokitr);
+		++tokitr;
        ++lexitr;
+		Expr* condition = buildExpr();
+       ++tokitr;
+		++lexitr;
+
        IfStmt* ifstmt = new IfStmt();
        ifstmt -> setExpr(condition);
-       ifstmt -> setTarget(line);
+       ifstmt -> setTarget(0);
        insttable.push_back(ifstmt);
+		while(*tokitr != "s_rbrace"){
+			buildStmt();
+		}
+		tokitr++; lexitr++;
+		GoToStmt* gotostmt = new GoToStmt();
+		insttable.push_back(gotostmt);
+		ifstmt->setTarget(insttable.size());
+		if(*tokitr == "t_else"){
+			tokitr++; lexitr++;
+			tokitr++; lexitr++;
+			while(*tokitr != "s_rbrace"){
+				buildStmt();
+			}
+			tokitr++; lexitr++;
+			gotostmt->setTarget(insttable.size());
+		}
+
+
 
     }
 
 	void buildWhile() {
 		//Aksel
-		++tokitr;  // Move over "t_while"
+		++tokitr;
 		++lexitr;
-		++tokitr;  // Move over "("
+		++tokitr;
 		++lexitr;
 
 		Expr* condition = buildExpr();
@@ -661,26 +764,13 @@ private:
 		WhileStmt* whileStmt = new WhileStmt(condition, 0);
 		insttable.push_back(whileStmt);
 
-		if (*tokitr != "{") {
-			cerr << "Error: Expected '{' to start while loop body" << endl;
-			return;
-		}
 		++tokitr;
 		++lexitr;
 
-		if (*tokitr == "}") {
-			++tokitr;
-			++lexitr;
-		} else {
-			while (*tokitr != "}") {
-				buildStmt();
-			}
+		while (*tokitr != "s_rbrace") {
+			buildStmt();
 		}
 
-		if (*tokitr != "}") {
-			cerr << "Error: Expected '}' to close while loop body" << endl;
-			return;
-		}
 		++tokitr;
 		++lexitr;
 
@@ -708,27 +798,33 @@ private:
 	void buildAssign(){
 		//Patrick
 		string id = *lexitr;
-		tokitr++; lexitr++;	//itterates over t_id
-        tokitr++; lexitr++;	//itterate over s_assign
+		tokitr++; lexitr++;
+        tokitr++; lexitr++;
         Expr* expr = buildExpr();
-        tokitr++; lexitr++;	//itterate over s_semi
+        tokitr++; lexitr++;
         AssignStmt* assign = new AssignStmt(id, expr);
         insttable.push_back(assign);
 	}
 	void buildInput(){
-      ++tokitr;
+		//Aksel
+      ++tokitr;++lexitr;
+	  ++tokitr;++lexitr;
       string var = *lexitr;
-      ++lexitr;
       InputStmt* input = new InputStmt();
       input->setVar(var);
       insttable.push_back(input);
+	  ++tokitr;++lexitr;
+	  ++tokitr;++lexitr;
     }
 	void buildOutput(){
 		//Patrick
-		tokitr++; lexitr++; //iterate over s_lparen
-        if(*tokitr == "t_text"){
+		tokitr++; lexitr++;
+		tokitr++; lexitr++;
+		auto nextTok = ++tokitr;
+		tokitr--;
+        if(*tokitr == "t_text" && *nextTok == "s_rparen"){
           	string text = *lexitr;
-            tokitr++; lexitr++; //iterate over t_text
+            tokitr++; lexitr++;
         	StrOutStmt* strout = new StrOutStmt(text);
             insttable.push_back(strout);
         }
@@ -737,7 +833,9 @@ private:
          	ExprOutStmt* strout = new ExprOutStmt(expr);
             insttable.push_back(strout);
         }
-        tokitr++; lexitr++; //iterate over s_rparen
+		if(*tokitr == "s_rparen"){
+			tokitr++; lexitr++;
+		}
 	}
 
 	Expr* buildExpr() {
@@ -777,8 +875,9 @@ private:
 				}
 			}
 		}
-
-		while (*tokitr != "s_semi" && *tokitr != "s_rparen") {
+		int parenthesis = 0;
+		bool inParan = false;
+		while (!inParan && *tokitr != "s_semi") {
 			string token = *tokitr;
 			string lexeme = *lexitr;
 
@@ -800,23 +899,30 @@ private:
 				}
 				outputQueue.push_back(lexeme);
 			}
-			else if (precMap.find(token) != precMap.end()) {
+			else if (token == "s_lparen") {
+				opStack.push_back(lexeme);
+				++parenthesis;
+			}
+			else if (precMap.find(lexeme) != precMap.end()) {
 				while (!opStack.empty() && precMap[opStack.back()] >= precMap[lexeme]) {
 					outputQueue.push_back(opStack.back());
 					opStack.pop_back();
 				}
 				opStack.push_back(lexeme);
 			}
-			else if (token == "s_lparen") {
-				opStack.push_back(lexeme);
-			}
+
 			else if (token == "s_rparen") {
-				while (!opStack.empty() && opStack.back() != "(") {
-					outputQueue.push_back(opStack.back());
-					opStack.pop_back();
+				if(parenthesis == 0) {
+					inParan = true;
 				}
-				if (!opStack.empty() && opStack.back() == "(") {
+				else{
+					while (!opStack.empty() && opStack.back() != "(") {
+						outputQueue.push_back(opStack.back());
+						opStack.pop_back();
+					}
+
 					opStack.pop_back();
+					--parenthesis;
 				}
 			}
 		++tokitr;
@@ -841,30 +947,38 @@ private:
 
 
 
-	// headers for populate methods may not change
-	void populateTokenLexemes(istream& infile){
-		//Aksel
-		string token, lexeme;
-		while (infile >> token >> lexeme) {
-			tokens.push_back(token);
-			lexemes.push_back(lexeme);
+	void populateTokenLexemes(istream& infile) { //Emma
+		string line;
+		while (getline(infile, line)) {
+			int i = 0;
+			bool found = false;
+			while (i < line.length() && !found) {
+				if (line[i] == ' ') {
+					found = true;
+				}
+				i++;
+			}
+			if (found) {
+				tokens.push_back(line.substr(0, i - 1));
+				lexemes.push_back(line.substr(i, line.length()));
+			}
 		}
-
 		tokitr = tokens.begin();
 		lexitr = lexemes.begin();
-    };
-	void populateSymbolTable(istream& infile){
+	};
+
+	void populateSymbolTable(istream& infile){	//Emma
           string id, datatype;
-          while (infile >> id >> datatype >> datatype) {
+          while (infile >> id >> datatype ) {
             symboltable[id] = datatype;
           }
      }
 
 public:
 	Compiler(){}
-	// headers may not change
+
 	Compiler(istream& source, istream& symbols){
-		// build precMap - include logical, relational, arithmetic operators
+		//Patrick
 		precMap["or"] = 5;
 		precMap["and"] = 4;
 		precMap["<"] = 3;
@@ -879,13 +993,12 @@ public:
 		precMap["/"] = 1;
 		precMap["%"] = 1;
 
-		populateTokenLexemes(source);	//Copy over lexemes data file readin code
-		populateSymbolTable(symbols);	//Reading in the symbol table output file in variable name, data type : lexeme, token
+		populateTokenLexemes(source);
+		populateSymbolTable(symbols);
 	}
 
-	// The compile method is responsible for getting the instruction
-	// table built.  It will call the appropriate build methods.
-	bool compile(){
+
+	bool compile(){ //Patrick
 		tokitr++; lexitr++; //iterate over t_main
         tokitr++; lexitr++; //iterate over s_lbrace
         buildStmt();
@@ -898,8 +1011,7 @@ public:
           return true;
 	}
 
-	// The run method will execute the code in the instruction
-	// table.
+
 	void run(){
 		//Aksel
 		pc = 0;
@@ -909,7 +1021,6 @@ public:
     };
 };
 
-// prints vartable, instable, symboltable
 void dump(){
 	cout << "-------Variable Table-----"<<endl;
 	for(const auto & pair : symboltable){
@@ -927,15 +1038,14 @@ void dump(){
 
 }
 int main(){
-  //emma emma
+  //emma
 
-	ifstream source("../sourcelexemes.txt");
-	ifstream symbols("../vars.txt");
-	if (!source || !symbols) exit(-1);
+	ifstream source("sourcelexemes.txt");
+	ifstream symbols("vars.txt");
+	 if (!source || !symbols) exit(-1);
 	Compiler c(source, symbols);
 	c.compile();
-	// might want to call dump to check if everything built correctly
-	// dump();
+	dump();
 	c.run();
 
 	return 0;

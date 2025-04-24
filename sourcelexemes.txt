@@ -1,0 +1,159 @@
+t_main main
+s_lbrace {
+t_output output
+s_lparen (
+t_text TESTING EXPRESSIONS
+s_rparen )
+
+t_output output
+s_lparen (
+s_lparen (
+t_id strPostFixExpr_VarsOnly
+s_lt <
+t_id strPostFixExpr_ConstOnly
+s_rparen )
+s_and and
+s_lparen (
+t_id strPostFixExpr_VarsOnly
+s_gt >
+t_id strPostFixExpr_ConstOnly
+s_rparen )
+s_rparen )
+
+t_id intPostFixExpr_ConstOnly
+s_assign =
+t_number 30
+s_minus -
+s_lparen (
+t_number 7
+s_mult *
+t_number 4
+s_rparen )
+s_semi ;
+
+t_output output
+s_lparen (
+t_id intPostFixExpr_ConstOnly
+s_rparen )
+
+t_id intPostFixExpr_VarsOnly
+s_assign =
+t_id intPostFixExpr_ConstOnly
+s_plus +
+t_id intPostFixExpr_ConstOnly
+s_semi ;
+
+t_output output
+s_lparen (
+t_id intPostFixExpr_VarsOnly
+s_rparen )
+
+t_id strPostFixExpr_ConstOnly
+s_assign =
+t_text hello
+s_plus +
+t_text world
+s_semi ;
+
+t_output output
+s_lparen (
+t_id strPostFixExpr_ConstOnly
+s_rparen )
+
+t_id strPostFixExpr_VarsOnly
+s_assign =
+t_id strPostFixExpr_ConstOnly
+s_plus +
+t_id strPostFixExpr_ConstOnly
+s_semi ;
+
+t_output output
+s_lparen (
+t_text CHECKING_STRPOSTFIX_COMPARISONEVALRETURNS_T_VALUE
+s_plus +
+s_lparen (
+t_id strPostFixExpr_VarsOnly
+s_gt >
+t_id strPostFixExpr_ConstOnly
+s_rparen )
+s_rparen )
+
+t_output output
+s_lparen (
+t_text CHECKING_STRPOSTFIX_COMPARISONEVALRETURNS_F_VALUE
+s_plus +
+s_lparen (
+t_id strPostFixExpr_VarsOnly
+s_lt <
+t_id strPostFixExpr_ConstOnly
+s_rparen )
+s_rparen )
+
+t_id strConstExpr
+s_assign =
+t_text Bogitty
+s_semi ;
+
+t_id intConstExpr
+s_assign =
+t_number 5
+s_semi ;
+
+t_id intIdExpr
+s_assign =
+t_id intConstExpr
+s_semi ;
+
+t_id strIdExpr
+s_assign =
+t_id strConstExpr
+s_semi ;
+
+t_output output
+s_lparen (
+t_text EXPRESSION_TESTING_COMPLETE
+s_rparen )
+
+t_while while
+s_lparen (
+t_id intPostFixExpr_ConstOnly
+s_lt <
+t_number 5
+s_rparen )
+s_lbrace {
+
+t_id intPostFixExpr_ConstOnly
+s_assign =
+t_id intConstExpr
+s_semi ;
+
+t_input input
+s_lparen (
+t_id intConstExpr
+s_rparen )
+
+t_if if
+s_lparen (
+t_id strPostFixExpr_ConstOnly
+s_eq ==
+t_id strConstExpr
+s_rparen )
+s_lbrace {
+
+t_output output
+s_lparen (
+t_text Good_Variable!
+s_rparen )
+
+s_rbrace }
+t_else else
+s_lbrace {
+
+t_output output
+s_lparen (
+t_text Bad_Variable!
+s_rparen )
+
+s_rbrace }
+s_rbrace }
+s_rbrace }
