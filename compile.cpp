@@ -699,9 +699,9 @@ public:
         } else if (strPostFixExpr) {
         	string* val = strPostFixExpr->eval();
         	if (*val == "") {
-        		pc = elsetarget;
-        	} else {
         		++pc;
+        	} else {
+        		pc = elsetarget;
         	}
         } else if (intPostFixExpr) {
 	        int val = intPostFixExpr->eval();
@@ -758,12 +758,11 @@ private:
 		++lexitr;
 		++tokitr;
 		++lexitr;
-
+		int index = insttable.size();
 		Expr* condition = buildExpr();
 
 		WhileStmt* whileStmt = new WhileStmt(condition, 0);
 		insttable.push_back(whileStmt);
-
 		++tokitr;
 		++lexitr;
 
@@ -773,7 +772,9 @@ private:
 
 		++tokitr;
 		++lexitr;
-
+		GoToStmt* gotostmt = new GoToStmt();
+		gotostmt->setTarget(index);
+		insttable.push_back(gotostmt);
 		int jumpTarget = insttable.size();
 		whileStmt->setTarget(jumpTarget);
 	}
